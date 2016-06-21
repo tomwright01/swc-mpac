@@ -9,7 +9,16 @@ minutes: 90
 source("tools/chunk-options.R")
 opts_chunk$set(fig.path = "fig/13-dplyr-")
 # Silently load in the data so the rest of the lesson works
-gapminder <- read.csv("data/gapminder-FiveYearData.csv", header=TRUE)
+permits <- read.csv("data/permits_short.csv", header = TRUE)
+date_format <- '%m/%d/%Y'
+permits$rec_date <- as.Date(permits$rec_date, date_format)
+permits$add_date <- as.Date(permits$add_date, date_format)
+permits$isu_date <- as.Date(permits$isu_date, date_format)
+permits$last_review_date <- as.Date(permits$last_review_date, date_format)
+permits$comp_date <- as.Date(permits$comp_date, date_format)
+permits[permits$comp_date==as.Date('1582-10-14', format='%Y-%m-%d'),'comp_date'] <- NA
+permits$total_time <- permits$comp_date - permits$rec_date
+permits$isu_year <- as.integer(format(permits$isu_date,'%Y'))
 ```
 
 > ## Learning Objectives {.objectives}
@@ -20,9 +29,9 @@ gapminder <- read.csv("data/gapminder-FiveYearData.csv", header=TRUE)
 Manipulation of dataframes means many things to many researchers, we often select certain observations (rows) or variables (columns), we often group the data by a certain variable(s), or we even calculate summary statistics. We can do these operations using the normal base R operations:
 
 ```{r}
-mean(gapminder[gapminder$continent == "Africa", "gdpPercap"])
-mean(gapminder[gapminder$continent == "Americas", "gdpPercap"])
-mean(gapminder[gapminder$continent == "Asia", "gdpPercap"])
+mean(permits[permits$city == "Toronto", "current_value"])
+mean(permits[permits$city == "Ottawa", "current_value"])
+mean(permits[permits$city == "Barrie", "current_value"])
 ```
 
 But this isn't very *nice* because there is a fair bit of repetition. Repeating yourself will cost you time, both now and later, and potentially introduce some nasty bugs.
@@ -56,15 +65,15 @@ library(dplyr)
 If, for example, we wanted to move forward with only a few of the variables in our dataframe we could use the `select()` function. This will keep only the variables you select.
 
 ```{r}
-year_country_gdp <- select(gapminder,year,country,gdpPercap)
+year_city_value <- select(permits,isu_year,city,current_value)
 ```
 
 ![](fig/13-dplyr-fig1.png)
 
-If we open up `year_country_gdp` we'll see that it only contains the year, country and gdpPercap. Above we used 'normal' grammar, but the strengths of `dplyr` lie in combining several functions using pipes. Since the pipes grammar is unlike anything we've seen in R before, let's repeat what we've done above using pipes.
+If we open up `year_city_value` we'll see that it only contains the year, country and gdpPercap. Above we used 'normal' grammar, but the strengths of `dplyr` lie in combining several functions using pipes. Since the pipes grammar is unlike anything we've seen in R before, let's repeat what we've done above using pipes.
 
 ```{r}
-year_country_gdp <- gapminder %>% select(year,country,gdpPercap)
+year_city_value <- permits %>% select(year,city,current_value)
 ```
 
 To help you understand why we wrote that in that way, let's walk through it step by step. First we summon the gapminder dataframe and pass it on, using the pipe symbol `%>%`, to the next step, which is the `select()` function. In this case we don't specify which data object we use in the `select()` function since in gets that from the previous pipe. **Fun Fact**: There is a good chance you have encountered pipes before in the shell. In R, a pipe symbol is `%>%` while in the shell it is `|` but the concept is the same!
@@ -74,14 +83,14 @@ To help you understand why we wrote that in that way, let's walk through it step
 If we now wanted to move forward with the above, but only with European countries, we can combine `select` and `filter`
 
 ```{r}
-year_country_gdp_euro <- gapminder %>%
-    filter(continent=="Europe") %>%
-    select(year,country,gdpPercap)
+year_city_value_NewBuild <- permits %>%
+    filter(mpac_wd=="New Building") %>%
+    select(year,city,current_value)
 ```
 
 > ## Challenge 1 {.challenge}
 >
-> Write a single command (which can span multiple lines and includes pipes) that will produce a dataframe that has the African values for `lifeExp`, `country` and `year`, but not for other Continents. 
+> Write a single command (which can span multiple lines and includes pipes) that will produce a dataframe that has the values for `current_value`, `city` and `year`, for work type (mpac_wd):Garages. 
 >How many rows does your dataframe have and why?
 >
 
@@ -90,103 +99,118 @@ As with last time, first we pass the gapminder dataframe to the `filter()` funct
 
 ## Using group_by() and summarize()
 
-Now, we were supposed to be reducing the error prone repetitiveness of what can be done with base R, but up to now we haven't done that since we would have to repeat the above for each continent. Instead of `filter()`, which will only pass observations that meet your criteria (in the above: `continent=="Europe"`), we can use `group_by()`, which will essentially use every unique criteria that you could have used in filter.
+Now, we were supposed to be reducing the error prone repetitiveness of what can be done with base R, but up to now we haven't done that since we would have to repeat the above for each continent. Instead of `filter()`, which will only pass observations that meet your criteria (in the above: `mpac_wd=="Garage"`), we can use `group_by()`, which will essentially use every unique criteria that you could have used in filter.
 
 ```{r}
-str(gapminder)
+str(permits)
 
-str(gapminder %>% group_by(continent))
+str(permits %>% group_by(mpac_wd))
 ```
-You will notice that the structure of the dataframe where we used `group_by()` (`grouped_df`) is not the same as the original `gapminder` (`data.frame`). A `grouped_df` can be thought of as a `list` where each item in the `list`is a `data.frame` which contains only the rows that correspond to the a particular value `continent` (at least in the example above).
+You will notice that the structure of the dataframe where we used `group_by()` (`grouped_df`) is not the same as the original `permits` (`data.frame`). A `grouped_df` can be thought of as a `list` where each item in the `list`is a `data.frame` which contains only the rows that correspond to the a particular value `mapc_wd` (at least in the example above).
 
 ![](fig/13-dplyr-fig2.png)
 
 ## Using summarize()
 
-The above was a bit on the uneventful side because `group_by()` much more exciting in conjunction with `summarize()`. This will allow use to create new variable(s) by using functions that repeat for each of the continent-specific data frames. That is to say, using the `group_by()` function, we split our original dataframe into multiple pieces, then we can run functions (e.g. `mean()` or `sd()`) within `summarize()`.
+The above was a bit on the uneventful side because `group_by()` is much more exciting in conjunction with `summarize()`. This will allow us to create new variable(s) by using functions that repeat for each of the continent-specific data frames. That is to say, using the `group_by()` function, we split our original dataframe into multiple pieces, then we can run functions (e.g. `mean()` or `sd()`) within `summarize()`.
 
 ```{r}
-gdp_bycontinents <- gapminder %>%
-    group_by(continent) %>%
-    summarize(mean_gdpPercap=mean(gdpPercap))
+value_by_city <- permits %>%
+    group_by(city) %>%
+    summarize(mean_value_per_city=mean(current_value))
 ```
+
+> ## Note: {.callout}
+> The `mean_value_per_city` for Barrie is NA (missing). This is because some of the current_value entries in the original data are missing. Remember, the `mean()` function takes an argument `na.rm=TRUE` to ignore these value.
+>```{r}
+>value_by_city <- permits %>%
+>    group_by(city) %>%
+>    summarize(mean_value_per_city=mean(current_value, na.rm=TRUE))
+>```
 
 ![](fig/13-dplyr-fig3.png)
 
-That allowed us to calculate the mean gdpPercap for each continent, but it gets even better.
+That allowed us to calculate the mean current_value for each continent, but it gets even better.
 
 > ## Challenge 2 {.challenge}
 >
-> Calculate the average life expectancy per country. Which had the longest life expectancy and which had the shortest life expectancy?
+> Calculate the average processing time (total_time) per city. Which had the longest processing time and which had the shortest processing time?
 >
 
-The function `group_by()` allows us to group by multiple variables. Let's group by `year` and `continent`.
+The function `group_by()` allows us to group by multiple variables. Let's group by `city` and `isu_year`.
 
 
 ```{r}
-gdp_bycontinents_byyear <- gapminder %>%
-    group_by(continent,year) %>%
-    summarize(mean_gdpPercap=mean(gdpPercap))
+processingTime_bycity_byyear <- permits %>%
+    group_by(city,isu_year) %>%
+    summarize(mean_processingTime=mean(total_time, na.rm=TRUE))
 ```
 
 That is already quite powerful, but it gets even better! You're not limited to defining 1 new variable in `summarize()`.
 
 ```{r}
-gdp_pop_bycontinents_byyear <- gapminder %>%
-    group_by(continent,year) %>%
-    summarize(mean_gdpPercap=mean(gdpPercap),
-              sd_gdpPercap=sd(gdpPercap),
-              mean_pop=mean(pop),
-              sd_pop=sd(pop))
+processingTime_Value_byCity_byYear <- permits %>%
+    group_by(city, isu_year) %>%
+    summarize(mean_processTime=mean(total_time, na.rm=TRUE),
+              sd_processTime=sd(total_time, na.rm=TRUE),
+              mean_Value=mean(current_value, na.rm=TRUE),
+              sd_Value=sd(current_value, na.rm=TRUE))
 ```
+
+> ## Tip {.callout}
+> A useful function for use with summarize is `n()`. It returns the number of records in each group.
+> ```{r}
+> processingTime_Value_byCity_byYear <- permits %>%
+>    group_by(city, isu_year) %>%
+>    summarize(mean_processTime=mean(total_time, na.rm=TRUE),
+>              count=n())
+>```
 
 ## Using mutate()
 
 We can also create new variables prior to (or even after) summarizing information using `mutate()`.
 ```{r}
-gdp_pop_bycontinents_byyear <- gapminder %>%
-    mutate(gdp_billion=gdpPercap*pop/10^9) %>%
-    group_by(continent,year) %>%
-    summarize(mean_gdpPercap=mean(gdpPercap),
-              sd_gdpPercap=sd(gdpPercap),
-              mean_pop=mean(pop),
-              sd_pop=sd(pop),
-              mean_gdp_billion=mean(gdp_billion),
-              sd_gdp_billion=sd(gdp_billion))
+processingTime_Value_byCity_byYear <- permits %>%
+    mutate(value_millions=current_value / 1e6) %>%
+    group_by(city,isu_year) %>%
+    summarize(mean_processTime=mean(total_time, na.rm=TRUE),
+              sd_processTime=sd(total_time, na.rm=TRUE),
+              mean_Value=mean(current_value, na.rm=TRUE),
+              sd_Value=sd(current_value, na.rm=TRUE),
+              mean_Value_million=mean(value_millions),
+              sd_Value_million=sd(value_millions))
 ```
 
 
-
-
-
-
 > ## Advanced Challenge {.challenge}
-> Calculate the average life expectancy in 2002 of 2 randomly selected countries for each continent. Then arrange the continent names in reverse order.
-> **Hint:** Use the `dplyr` functions `arrange()` and `sample_n()`, they have similar syntax to other dplyr functions.
+> Calculate how many permits issues in 2015 and 2016 are outstanding in each city. Display the results in order of number of outstanding permits, highest to lowest.
+> **Hint:** Use the `dplyr` function `arrange()` , it has similar syntax to other dplyr functions.
 >
 
 > ## Solution to Challenge 1 {.challenge}
 >```{r}
->year_country_lifeExp_Africa <- gapminder %>%
->                            filter(continent=="Africa") %>%
->                            select(year,country,lifeExp)
+>year_city_currentValue_Garages <- permits %>%
+>                            filter(mpac_wd=="Garage") %>%
+>                            select(isu_year,city,current_value)
 > ```
 
 > ## Solution to Challenge 2 {.challenge}
 >```{r}
->lifeExp_bycountry <- gapminder %>%
->    group_by(country) %>%
->    summarize(mean_lifeExp=mean(lifeExp))
+>processingTime_by_city <- permits %>%
+>    group_by(city) %>%
+>    summarize(mean_processingTime=mean(total_time))
 >```
 
 > ## Solution to Advanced Challenge {.challenge}
 >```{r}
->lifeExp_2countries_bycontinents <- gapminder %>% 
->    filter(year==2002) %>%
->    group_by(continent) %>%
->    sample_n(2) %>%
->    summarize(mean_lifeExp=mean(lifeExp)) %>%
->    arrange(desc(mean_lifeExp))
+> permits %>% 
+>   filter(isu_year %in% c(2015,2016)) %>%
+>   mutate(outstanding = is.na(comp_date)) %>%
+>   select(city, outstanding) %>%
+>   filter(outstanding) %>%
+>   group_by(city) %>%
+>   summarise(count = n()) %>%
+>   arrange(desc(count))
 >```
 
 ## Other great resources

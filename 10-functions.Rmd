@@ -7,8 +7,18 @@ minutes: 45
 
 ```{r, include=FALSE}
 source("tools/chunk-options.R")
+opts_chunk$set(fig.path = "fig/13-dplyr-")
 # Silently load in the data so the rest of the lesson works
-gapminder <- read.csv("data/gapminder-FiveYearData.csv", header=TRUE)
+permits <- read.csv("data/permits_short.csv", header = TRUE)
+date_format <- '%m/%d/%Y'
+permits$rec_date <- as.Date(permits$rec_date, date_format)
+permits$add_date <- as.Date(permits$add_date, date_format)
+permits$isu_date <- as.Date(permits$isu_date, date_format)
+permits$last_review_date <- as.Date(permits$last_review_date, date_format)
+permits$comp_date <- as.Date(permits$comp_date, date_format)
+permits[permits$comp_date==as.Date('1582-10-14', format='%Y-%m-%d'),'comp_date'] <- NA
+permits$total_time <- permits$comp_date - permits$rec_date
+permits$isu_year <- as.integer(format(permits$isu_date,'%Y'))
 ```
 
 > ## Learning Objectives {.objectives}
@@ -126,20 +136,18 @@ kelvin_to_celsius <- function(temp) {
 >
 
 
-We're going to define
-a function that calculates the Gross Domestic Product of a nation from the data
+We're going to define a function that calculates the processing time for permits
 available in our dataset:
 
 ```{r}
-# Takes a dataset and multiplies the population column
-# with the GDP per capita column.
-calcGDP <- function(dat) {
-  gdp <- dat$pop * dat$gdpPercap
-  return(gdp)
+# Takes a dataset and subtracts the completion date from the issue date
+calcProcessTime <- function(dat) {
+  processTime <- dat$comp_date - dat$isu_date
+  return(as.integer(processTime))
 }
 ```
 
-We define `calcGDP` by assigning it to the output of `function`.
+We define `calcProcessTime` by assigning it to the output of `function`.
 The list of argument names are contained within parentheses.
 Next, the body of the function -- the statements executed when you
 call the function -- is contained within curly braces (`{}`).
@@ -158,25 +166,24 @@ of the function.
 
 
 ```{r}
-calcGDP(head(gapminder))
+calcProcessTime(head(permits))
 ```
 
 That's not very informative. Let's add some more arguments so we can extract
-that per year and country.
+that per year and city
 
 ```{r}
-# Takes a dataset and multiplies the population column
-# with the GDP per capita column.
-calcGDP <- function(dat, year=NULL, country=NULL) {
+# Takes a dataset and subtracts the isu_date from the comp_date
+calcProcessTime <- function(dat, year=NULL, city=NULL) {
   if(!is.null(year)) {
-    dat <- dat[dat$year %in% year, ]
+    dat <- dat[dat$isu_year %in% year, ]
   }
-  if (!is.null(country)) {
-    dat <- dat[dat$country %in% country,]
+  if (!is.null(city)) {
+    dat <- dat[dat$city %in% city,]
   }
-  gdp <- dat$pop * dat$gdpPercap
+  processTime <- dat$comp_date - dat$isu_date
 
-  new <- cbind(dat, gdp=gdp)
+  new <- cbind(dat, processTime=processTime)
   return(new)
 }
 ```
@@ -200,38 +207,38 @@ You can see that the output is much more informative than a vector of numbers.
 Let's take a look at what happens when we specify the year:
 
 ```{r}
-head(calcGDP(gapminder, year=2007))
+head(calcProcessTime(permits, year=2014))
 ```
 
-Or for a specific country:
+Or for a specific city:
 
 ```{r}
-calcGDP(gapminder, country="Australia")
+calcProcessTime(permits, city="Barrie")
 ```
 
 Or both:
 
 ```{r}
-calcGDP(gapminder, year=2007, country="Australia")
+calcProcessTime(permits, year=2014, city="Barrie")
 ```
 
 Let's walk through the body of the function:
 
 ``` {r, eval=FALSE}
-calcGDP <- function(dat, year=NULL, country=NULL) {
+calcProcessTime <- function(dat, year=NULL, city=NULL) {
 ```
 
-Here we've added two arguments, `year`, and `country`. We've set
+Here we've added two arguments, `year`, and `city`. We've set
 *default arguments* for both as `NULL` using the `=` operator
 in the function definition. This means that those arguments will
 take on those values unless the user specifies otherwise.
 
 ```{r, eval=FALSE}
   if(!is.null(year)) {
-    dat <- dat[dat$year %in% year, ]
+    dat <- dat[dat$isu_year %in% year, ]
   }
-  if (!is.null(country)) {
-    dat <- dat[dat$country %in% country,]
+  if (!is.null(city)) {
+    dat <- dat[dat$city %in% city,]
   }
 ```
 
@@ -240,12 +247,12 @@ and whenever they're not `null` overwrite the dataset stored in `dat` with
 a subset given by the non-`null` argument.
 
 I did this so that our function is more flexible for later. We
-can ask it to calculate the GDP for:
+can ask it to calculate the processing time for:
 
  * The whole dataset;
  * A single year;
- * A single country;
- * A single combination of year and country.
+ * A single city;
+ * A single combination of year and city.
 
 By using `%in%` instead, we can also give multiple years or countries
 to those arguments.
@@ -266,27 +273,27 @@ to those arguments.
 >
 > Another important concept is scoping: any variables (or functions!) you
 > create or modify inside the body of a function only exist for the lifetime
-> of the function's execution. When we call `calcGDP`, the variables `dat`,
-> `gdp` and `new` only exist inside the body of the function. Even if we
+> of the function's execution. When we call `calcProcessTime`, the variables `dat`,
+> `processTime` and `new` only exist inside the body of the function. Even if we
 > have variables of the same name in our interactive R session, they are
 > not modified in any way when executing a function.
 >
 
 ```{r, eval=FALSE}
-  gdp <- dat$pop * dat$gdpPercap
-  new <- cbind(dat, gdp=gdp)
+  processTime <- dat$comp_year - dat$isu_year
+  new <- cbind(dat, processTime = processTime)
   return(new)
 }
 ```
 
-Finally, we calculated the GDP on our new subset, and created a new
+Finally, we calculated the processing times on our new subset, and created a new
 data frame with that column added. This means when we call the function
-later we can see the context for the returned GDP values,
+later we can see the context for the returned processing time values,
 which is much better than in our first attempt where we got a vector of numbers.
 
 > ## Challenge 3 {.challenge}
 >
-> Test out your GDP function by calculating the GDP for New Zealand in 1987. How does this differ from New Zealand's GDP in 1952?
+> Test out your calcProcessTime function by calculating the processing times for Toronto in 2007. How does this differ from Toronto processing times in 2015?
 >
 
 > ## Challenge 4 {.challenge}
@@ -388,9 +395,9 @@ which is much better than in our first attempt where we got a vector of numbers.
 
 > ## Solution to challenge 3 {.challenge}
 >
-> GDP for New Zealand in 1987: 65050008703
+> mean process Times for Toronto in 2007: 2435 days
 >
-> GDP for New Zealand in 1952: 21058193787
+> mean process Times for Toronto in 2015: 494 days
 >
 
 

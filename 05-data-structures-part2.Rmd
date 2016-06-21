@@ -132,7 +132,7 @@ cats
 So far, you've seen the basics of manipulating data.frames with our cat data; now, let's use those skills to digest a more realistic dataset. Lets read in the gapminder dataset that we downloaded previously:
 
 ```{r}
-gapminder <- read.csv("data/gapminder-FiveYearData.csv")
+gapminder <- read.csv("data/permits_short.csv")
 ```
 
 > ## Miscellaneous Tips {.callout}
@@ -150,49 +150,49 @@ gapminder <- read.csv("data/gapminder-FiveYearData.csv")
 > converting them to plain text first by using the [readxl](https://cran.r-project.org/web/packages/readxl/index.html) package.
 >
 
-Let's investigate gapminder a bit; the first thing we should always do is check out what the data looks like with `str`:
+Let's investigate permits_short a bit; the first thing we should always do is check out what the data looks like with `str`:
 
 ```{r}
-str(gapminder)
+str(permits)
 ```
 
 We can also examine individual columns of the data.frame with our `typeof` function:
 
 ```{r}
-typeof(gapminder$year)
-typeof(gapminder$lifeExp)
-typeof(gapminder$country)
-str(gapminder$country)
+typeof(permits$roll_no)
+typeof(permits$city)
+typeof(permits$region)
+str(permits$region)
 ```
 
-We can also interrogate the data.frame for information about its dimensions; remembering that `str(gapminder)` said there were 1704 observations of 6 variables in gapminder, what do you think the following will produce, and why?
+We can also interrogate the data.frame for information about its dimensions; remembering that `str(permits_short)` said there were 569 observations of 15 variables in gapminder, what do you think the following will produce, and why?
 
 ```{r}
-length(gapminder)
+length(permits)
 ```
 
-A fair guess would have been to say that the length of a data.frame would be the number of rows it has (1704), but this is not the case; remember, a data.frame is a *list of vectors and factors*:
+A fair guess would have been to say that the length of a data.frame would be the number of rows it has (569), but this is not the case; remember, a data.frame is a *list of vectors and factors*:
 
 ```{r}
-typeof(gapminder)
+typeof(permits)
 ```
 
-When `length` gave us 6, it's because gapminder is built out of a list of 6 columns. To get the number of rows and columns in our dataset, try:
+When `length` gave us 15, it's because gapminder is built out of a list of 15 columns. To get the number of rows and columns in our dataset, try:
 
 ```{r}
-nrow(gapminder)
-ncol(gapminder)
+nrow(permits)
+ncol(permits)
 ```
 
 Or, both at once:
 
 ```{r}
-dim(gapminder)
+dim(permits_short)
 ```
 
 We'll also likely want to know what the titles of all the columns are, so we can ask for them later:
 ```{r}
-colnames(gapminder)
+colnames(permits_short)
 ```
 
 At this stage, it's important to ask ourselves if the structure R is reporting matches our intuition or expectations; do the basic data types reported for each column make sense? If not, we need to sort any problems out now before they turn into bad surprises down the road, using what we've learned about how R interprets data, and the importance of *strict consistency* in how we record our data.
@@ -200,7 +200,7 @@ At this stage, it's important to ask ourselves if the structure R is reporting m
 Once we're happy that the data types and structures seem reasonable, it's time to start digging into our data proper. Check out the first few lines:
 
 ```{r}
-head(gapminder)
+head(permits_short)
 ```
 
 To make sure our analysis is reproducible, we should put the code
@@ -209,7 +209,7 @@ into a script file so we can come back to it later.
 > ## Challenge 2 {.challenge}
 >
 > Go to file -> new file -> R script, and write an R script
-> to load in the gapminder dataset. Put it in the `scripts/`
+> to load in the permits_short dataset. Put it in the `scripts/`
 > directory and add it to version control.
 >
 > Run the script using the `source` function, using the file path
@@ -218,7 +218,7 @@ into a script file so we can come back to it later.
 
 > ## Challenge 3 {.challenge}
 >
-> Read the output of `str(gapminder)` again; 
+> Read the output of `str(permits_short)` again; 
 > this time, use what you've learned about factors, lists and vectors,
 > as well as the output of functions like `colnames` and `dim`
 > to explain what everything that `str` prints out for gapminder means.
@@ -236,21 +236,21 @@ into a script file so we can come back to it later.
 >
 
 > ## Solution to Challenge 2 {.challenge}
-> The contents of `script/load-gapminder.R`:
+> The contents of `script/load-permits.R`:
 > ```{r eval = FALSE}
-> gapminder <- read.csv(file = "data/gapminder-FiveYearData.csv")
+> permits <- read.csv(file = "data/permits_short.csv")
 > ```
-> To run the script and load the data into the `gapminder` variable:
+> To run the script and load the data into the `permits` variable:
 > ```{r eval = FALSE}
-> source(file = "scripts/load-gapminder.R")
+> source(file = "scripts/load-permits.R")
 > ```
 >
 
 > ## Solution to Challenge 3 {.challenge}
 > 
-> The object `gapminder` is a data frame with columns
-> - `country` and `continent` are factors.
-> - `year` is an integer vector.
-> - `pop`, `lifeExp`, and `gdpPercap` are numeric vectors.
+> The object `permits` is a data frame with columns
+> - `roll_no` is a numeric vector.
+> - `rec_date`, `add_date`, `isu_date`, `last_review_date`, `comp_date`, `type`, `zone` and `city` are factors.
+> - `current_value`, `forcasted_value`, `region` and `mpac_wd` are integer vectors.
 > 
 

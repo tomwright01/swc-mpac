@@ -8,7 +8,15 @@ minutes: 35
 ```{r, include=FALSE}
 source("tools/chunk-options.R")
 # Silently load in the data so the rest of the lesson works
-gapminder <- read.csv("data/gapminder-FiveYearData.csv", header=TRUE)
+permits <- read.csv("data/permits_short.csv", header = TRUE)
+permits$rec_date <- as.Date(permits$rec_date, date_format)
+permits$add_date <- as.Date(permits$add_date, date_format)
+permits$isu_date <- as.Date(permits$isu_date, date_format)
+permits$last_review_date <- as.Date(permits$last_review_date, date_format)
+permits$comp_date <- as.Date(permits$comp_date, date_format)
+permits[permits$comp_date==as.Date('1582-10-14', format='%Y-%m-%d'),'comp_date'] <- NA
+permits$total_time <- permits$comp_date - permits$rec_date
+permits$isu_year <- as.integer(format(permits$isu_date,'%Y'))
 # Silently set seed for random number generation, so we don't have to explain it
 set.seed(10)
 ```
@@ -105,14 +113,14 @@ x
 >
 > Use an `if()` statement to print a suitable message
 > reporting whether there are any records from 2002 in
-> the `gapminder` dataset.
+> the `permits` dataset.
 > Now do the same for 2012.
 >
 
 Did anyone get a warning message like this?
 
 ```{r, echo=FALSE}
-if (gapminder$year == 2012) {}
+if (permits$isu_year == 2012) {}
 ```
 
 If your condition evaluates to a vector with more than one logical element,
@@ -254,23 +262,22 @@ output_vector2
 
 > ## Challenge 3 {.challenge}
 >
-> Write a script that loops through the `gapminder` data by continent and prints out
-> whether the mean life expectancy is smaller or larger than 50
-> years.
+> Write a script that loops through the `permits` data by city and prints out
+> whether the median current value is smaller or larger than 500,000.
 >
 
 > ## Challenge 4 {.challenge}
 >
 > Modify the script from Challenge 4 to also loop over each
-> country. This time print out whether the life expectancy is
-> smaller than 50, between 50 and 70, or greater than 70.
+> work type. This time print out whether the median current value is
+> smaller than 500000, between 500000 and 1 million, or greater than 1 million.
 >
 
 > ## Challenge 5 - Advanced {.challenge}
 >
-> Write a script that loops over each country in the `gapminder` dataset,
-> tests whether the country starts with a 'B', and graphs life expectancy
-> against time as a line graph if the mean life expectancy is under 50 years.
+> Write a script that loops over each city in the `permits` dataset,
+> tests whether the country starts with a 'O', and graphs the number of work permits
+> against time as a line graph.
 >
 
 
@@ -338,3 +345,16 @@ output_vector2
 > ```{r ch10pt12-sol, eval=FALSE}
 > output_matrix[j, i] <- temp_output
 > ```
+
+> ## Solution to Challenge 3 {.challenge}
+> ```{r}
+> for(c in levels(permits$city)){
+>   subdata <- subset(permits, city==c)
+>   mv <- median(subset(permits,city==c)$current_value,na.rm=TRUE)
+>   if(mv>500000){
+>     print('bigger than 500000')
+>   }else{
+>     print('less than 500000')
+>   }
+> }
+
