@@ -9,6 +9,7 @@ minutes: 70
 source("tools/chunk-options.R")
 opts_chunk$set(fig.path = "fig/08-plot-ggplot2-")
 # Silently load in the data so the rest of the lesson works
+date_format <- '%m/%d/%Y'
 permits <- read.csv("data/permits_short.csv", header = TRUE)
 permits$rec_date <- as.Date(permits$rec_date, date_format)
 permits$add_date <- as.Date(permits$add_date, date_format)
@@ -91,14 +92,14 @@ do by adding a new **geom** layer. In our example, we used `geom_point`, which
 tells `ggplot` we want to visually represent the relationship between **x** and
 **y** as a scatterplot of points:
 
-```{r lifeExp-vs-gdpPercap-scatter2}
+```{r forecasted_value-vs-current_value-scatter2}
 ggplot(data = permits, aes(x = current_value, y = forecasted_value)) +
   geom_point()
 ```
 
 Finally we limited the values on the x-axis `current_value` to just display values below 1 million.
 
-```{r lifeExp-vs-gdpPercap-scatter3}
+```{r forecasted_value-vs-current_value-scatter3}
 ggplot(data = permits, aes(x = current_value, y = total_time)) +
   geom_point() +
   xlim(c(0,1e6))
@@ -130,7 +131,7 @@ ggplot(data = permits, aes(x = current_value, y = total_time)) +
 Using a scatterplot probably isn't the best for visualising change over time.
 Instead, let's tell `ggplot` to visualise the data as a line plot:
 
-```{r lifeExp-line}
+```{r processTime-line}
 ggplot(data = permits, aes(x=isu_date, y=total_time, color=city, by=mpac_wd)) +
   geom_line()
 ```
@@ -142,7 +143,7 @@ country.
 But what if we want to visualise both lines and points on the plot? We can
 simply add another layer to the plot:
 
-```{r lifeExp-line-point}
+```{r processTime-line-point}
 ggplot(data = permits, aes(x=isu_date, y=total_time, by=mpac_wd, color=city)) +
   geom_line() + geom_point()
 ```
@@ -151,7 +152,7 @@ It's important to note that each layer is drawn on top of the previous layer. In
 this example, the points have been drawn *on top of* the lines. Here's a
 demonstration:
 
-```{r lifeExp-layer-example-1}
+```{r processTime-layer-example-1}
 ggplot(data = permits, aes(x=isu_date, y=total_time, by=mpac_wd)) +
   geom_line(aes(color=city)) + geom_point()
 ```
@@ -172,7 +173,7 @@ lines.
 Ggplot also makes it easy to overlay statistical models over the data. To
 demonstrate we'll go back to our first example:
 
-```{r lifeExp-vs-gdpPercap-scatter3, message=FALSE}
+```{r date-vs-value, message=FALSE}
 ggplot(data = permits, aes(x = isu_date, y = current_value, color=mpac_wd)) +
   geom_point()
 ```
@@ -320,8 +321,8 @@ code to modify!
 > column. What trends do you see in the data? Are they what you expected?
 >
 > ```{r ch2-sol}
-> ggplot(data = permits, aes(x = isu_date, y = total_time, color=city))
->    + geom_point()
+> ggplot(data = permits, aes(x = isu_date, y = total_time, color=city)) +
+>    geom_point()
 > ```
 >
 
@@ -348,7 +349,7 @@ code to modify!
 >
 > ```{r ch4a-sol}
 > ggplot(data = permits, aes(x = isu_date, y = current_value)) +
->  geom_point(size=3, color="orange") + scale_x_log10() +
+>  geom_point(size=3, color="orange") + scale_y_log10() +
 >  geom_smooth(method="lm", size=1.5)
 > ```
 >
@@ -362,7 +363,7 @@ code to modify!
 >
 >```{r ch4b-sol}
 > ggplot(data = permits, aes(x = isu_date, y = current_value, color = mpac_wd0)) +
-> geom_point(size=3, pch=17) + scale_x_log10() +
+> geom_point(size=3, pch=17) + scale_y_log10() +
 > geom_smooth(method="lm", size=1.5)
 > ```
 
