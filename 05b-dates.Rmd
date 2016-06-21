@@ -1,0 +1,179 @@
+---
+layout: page
+title: R for reproducible scientific analysis
+subtitle: A brief introduction to dates
+minutes: 30
+---
+
+```{r, include=FALSE}
+source("tools/chunk-options.R")
+
+```
+
+> ## Learning Objectives {.objectives}
+>
+> - Know the functions in base R that can help us work with dates.
+> - Recognise some of the problems associated with working with dates.
+> - Be able to correctly convert dates from one format to another.
+> - Be able to perform caluculations using dates.
+>
+
+Working with dates and times is not easy. If we asked everyone to write down thier birthday we would probably see several different formats.
+
+- 1st August, 1973
+- 1973-08-01
+- 1973/08/01
+- 1-8-73
+- 8-1-1973
+- etc.
+
+Computers often deal with dates by expressing them as the amount of time elapsed since an epoch. Excel uses January 0, 1900 for it's epoch. Windows uses January 1st, 1601. Unix (and by default R) use January 1st 1970.
+
+The key function in R for handling dates is `as.Date()`. This function converts date information into a standard `date` object that R can work with.
+
+```{r}
+as.Date("1973/08/01")
+```
+
+We can see the string "1973/08/01" has been converted to a `date` object. The basic data type is a `double`
+
+```{r}
+date_object <- as.Date("1973/08/01")
+class(date_object)
+```
+```{r}
+typeof(date_object)
+```
+
+By default `as.Date()` accepts a `string` in the format YYYY-M-D. The Month and Day can be one or two digits. The separator can be `-` or `\`.
+
+If the input date is not in one of these standard formats, the `as.Date()` function can take a second argument specifying the format.
+
+| Code | Value |
+| --- | --- |
+| %d | Day of the month (decimal number) |
+| %d | Month (decimal number) |
+| %b | Month (abbreviated) |
+| %B | Month (full name) |
+| %y | Year (2 digit) |
+| %Y | Year (4 digit) |
+
+```{r}
+as.Date("8-1-1973", format = "%m-%d-%Y")
+```
+>
+> ## Challenge 1 {.challenge}
+>
+> What format string is needed for these dates:
+> - 73/8/1
+> - 1973 08 1
+> - 1st August, 1973
+
+> ## Tip :Two digit years {.callout}
+>
+> If a two digit year is supplied when a four digit year is expected values before January 1st 1970 are interpreted as being 20XX.
+>
+
+Like most R functions `as.Date()` will operate on vectors of dates.
+```{r}
+birthdays <- c(tukey='1915-06-16', fisher='1890-02-17',
+              cramer='1893-09-25', kendall='1907-09-06')
+birthdays <- as.Date(birthdays, '%Y-%m-%d')
+class(birthdays)
+
+```
+
+>
+> ## Challenge 2 {.challenge}
+> Convert the 5 date columns ('rec_date', 'add_date', 'isu_date', 'last_review_date', 'comp_date') in the mpac data to date objects.
+>
+
+## Formatting dates
+
+The generic function `format()` can be used to display dates in different formats.
+
+```{r}
+format(birthdays, format='%d %B, %Y')
+```
+
+> ## Challenge 3 {.challenge}
+>
+> Add a column `isu_year` to the permits data frame that contains only the year from the isu_date column.
+>
+
+## Date arithmetic
+
+Because the underlying type of the `Date` object is a number `Date` objects can be used with many basic `R` functions.
+
+For example to find the earliest date in a vector of dates:
+
+```{r}
+min(birthdays)
+```
+
+> ## Challenge 4 {.challenge}
+>
+> - Find the earliest completion date (`comp_date`) in the permits data.
+> - What do you notice about this date.
+> - How would R prefer this value to be represented?
+
+R can calculate the time between two dates.
+
+```{r}
+date1 <- as.Date('1973-08-01',format = '%Y-%m-%d')
+today <- Sys.Date()
+today - date1
+```
+
+The difftime function allows us to do the same procedure but to return the answer in different units.
+
+```{r}
+difftime(birthdays, date1, units='weeks')
+```
+
+> ## Challenge 5 {.challenge}
+>
+> Add a new column `total_time` to the permits data frame that contains the time (in days) between the permit being completed and the permit being issued.
+
+
+## Challenge solutions
+
+> ## Challenge 1 {.challenge}
+> - as.Date("73/8/1", format = "%y/%m/%d")
+> - as.Date("1973 08 1", format = "%Y %m %d")
+> - as.Date("1st August, 1973", format = "%dst %B, %Y")
+
+> ## Solution to Challenge 2 {.challenge}
+>
+> ```{r}
+> date_format <- '%m/%d/%Y'
+> permits$rec_date <- as.Date(permits$rec_date, date_format)
+> permits$add_date <- as.Date(permits$add_date, date_format)
+> permits$isu_date <- as.Date(permits$isu_date, date_format)
+> permits$last_review_date <- as.Date(permits$last_review_date, date_format)
+> permits$comp_date <- as.Date(permits$comp_date, date_format)
+>
+
+> ## Solution to Challenge 3 {.challenge}
+>
+> ```{r}
+> permits$isu_year <- as.integer(format(permits$isu_date,'%Y'))
+> ```
+>
+
+> ## Solution to Challenge 4 {.challenge}
+> ```{r}
+> min(permits$comp_date)
+> ```
+>
+> October 14th, 1582 is the day preceeding the first day of the Gregorian Calendar. In fact this date never existed. Somewhere in the creation of this data the value 0 (or missing) has been substituted with this date. R would prefer us to use `NA` for missing values.
+>
+> ```{r}
+> permits[permits$comp_date==as.Date('1582-10-14', format='%Y-%m-%d'),'comp_date'] <- NA
+> ```
+
+> ## Solution to Challenge 5 {.challenge}
+>
+> ```{r}
+> permits$total_time <- permits$comp_date - permits$rec_date
+>
