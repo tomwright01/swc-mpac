@@ -1,0 +1,153 @@
+---
+layout: page
+title: R for reproducible scientific analysis
+subtitle: Accessing data from databases
+minutes: 30
+---
+
+```{r, include=FALSE}
+source("tools/chunk-options.R")
+```
+
+> ## Learning Objectives {.objectives}
+>
+> - Know how to load data from a database using `dplyr`.
+> - Understand the principles of a relational database.
+> - Be able to merge data from more than one table using a key.
+>
+
+A limitation of base `R` is that it holds all it's data in memory. This can be a problem with very large sets of data. Fortunatly several packages exist to access data stored in databases.
+
+The package we shall use today is [dplyr](https://cran.r-project.org/web/packages/dplyr/index.html).
+
+To download the `dplyr` package:
+```{r, eval=FALSE}
+install.packages("dplyr")
+```
+
+and to make it available for use:
+```{r}
+library(dplyr)
+```
+
+## About databases
+
+A database is a great way to store and manipulate complex information. Databases are arranged as tables. Each table has columns (also known as fields) that describe the data, and rows (also known as records) which contain the data. This should sound familer, it is very similar to the structure of a `data frame`.
+
+We access data from a database by sending commands (usually called queries) to a `database manager`, a program that manipulates the database for us. The database manager does whatever lookups and calculations the query specifies, returning the results in a tabular form that we can use for further operations.
+
+Queries are written in a language called SQL, which stands for "Structured Query Language". SQL  provides hundreds of different ways to analyse and recombine data. The `dplyr` package takes care of converting our `R` commands to `SQL` for us.
+
+> ## SQLite {.callout}
+> For this lesson the data is stored in an SQLite database. SQLite is very convenient as everything you need is included with R. `dplyr` also supports PostgreSQL, MySQL and if you need to go large, Google BigQuery.
+>
+
+## Accessing the data
+The database we will use is called `permits.sqlite`. To access the data we first create a connection.
+
+```{r}
+conn <- src_sqlite('data/permits.sqlite')
+conn
+```
+
+Printing the connection gives us a list of the tables in the database. In this case there are 4 tables. The table sqlite_stat1 is used by the SQLite program and will not bother us further. The tables `PERMITS`, `REGIONS` and `WORK_TYPES` contain all the data from the `permits.csv` file we have been using.
+
+> ## Relational databases {.callout}
+>
+> Relational databases are used to reduce the storage size of data and to make management easier. Each row in a table of a relational database has a unique index (known as a key). This key can be used to link the information in different tables together. 
+> For example in our original `permits.csv` the name of the city was repeated in every row. The string "Sault Ste. Marie" requires 16 bytes of data each time it is stored. In a relational database the string is stored once, with a smaller key value. The key can then be referenced every time it is required.
+>
+
+To connect to a table with `dplyr` we use the `tbl()` function.
+```{r}
+regions_sql <- tbl(src = conn, "REGIONS")
+regions_sql
+```
+
+The `id` column is the key. We can examine the `SQL` using the query attribute of the `regions_sql` table.
+
+```{r}
+regions_sql$query
+```
+
+> ## Challenge 1 {.challenge}
+>
+> Create a connection to the `PERMITS` table.
+>
+
+> ## Using SQL {.callout}
+> If you are familier with SQL tables can be create using arbitary SQL using the `sql()` function.
+>```{r, eval=FALSE}
+> tbl(conn, sql("SELECT * from REGIONS"))
+> ```
+
+**Note:** The tables created using the `tbl()` function are not data frames.
+```{r}
+class(regions_sql)
+```
+
+This means they act slightly differently. For example to get the column names we need to ask for them specifically using the `colnames()` function. To examine the table structure use `glimpse()` instead of `str()`.
+
+## Joining tables together
+
+The power of a relational database comes with linking different tables together. The `regions_sql` table contains a column `id`. The values in this column are unique for each row of the table. This column is the `key` to this table. The `permits_sql` table contains a column `region_id`. Each `region_id` in the `permits_sql` table refers to a row in the `regions_sql` table.
+
+> ## Challenge 2 {.callout}
+> Examine the permits_sql table. What column would be suitable for use as a key?
+>
+
+To link tables we use the join family of functions. The most common join is an `inner join`. This will return all the rows from x where there are matching values in y, all columns from x and y are returned.
+
+By default columns with the same name in each table to be joined are matched. We can over-ride this by using the `by` argument.
+
+To join the `permits_sql` with the `regions_sql`:
+```{r}
+permits <- inner_join(permits_sql, regions_sql, by=c("region_id"="id"))
+```
+
+> ## Challenge 3 {.callout}
+> Read the help on joins `?joins` to discover the other types of joins available.
+> Extend the permits table we just created by linking to the work_types_sql table.
+>
+
+## Laziness
+A key advantage to dplyr for accessing databases is it is `lazy`. 
+ - it never pulls data back to R unless you ask for it
+ - it delays doing work until the last minute, collecting together everything you want to do then sending that to the database in one step.
+ 
+For example, take the following code:
+```{r}
+permits_sql <- tbl(conn, "PERMITS")
+regions_sql <- tbl(conn, "REGIONS")
+work_types_sql <- tbl(conn, "WORK_TYPES")
+
+permits <- inner_join(permits_sql, regions_sql, by=c("region_id"="id"))
+permits <- inner_join(permits, work_types_sql, by=c("work_type_id"="id"))
+```
+
+This sequence never touches the database. If we look at the `query` attribute of the `permits` object we can see the sql has been generated.
+```{r}
+permits$query
+```
+
+Even when we look at the `permits` table. `dplyr` only gets the first 10 rows from the database. We can use the `collect()` function to actually return all the data.
+
+## Challenge solutions
+
+> ## Challenge 1 {.challenge}
+> ```{r, eval=FALSE}
+> permits_sql <- tbl(src = conn, "PERMITS")
+> work_types_sql <- tbl(src = conn, "WORK_TYPES")
+
+> ## Challenge 2 {.challenge}
+> ```{r, eval = FALSE}
+> glimpse(permits_sql)
+> ```
+> The roll_no column is unique for each row. It would be a suitable key.
+
+> ## Challenge 3 {.challenge}
+```{r, eval = FALSE}
+> work_types_sql <- tbl(conn, "WORK_TYPES")
+> permits <- inner_join(permits, work_types_sql, by = c("work_type_id" = "id"))
+>```
+>
