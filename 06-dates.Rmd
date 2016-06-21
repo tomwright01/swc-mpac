@@ -7,7 +7,7 @@ minutes: 30
 
 ```{r, include=FALSE}
 source("tools/chunk-options.R")
-
+permits <- read.csv("data/permits_short.csv", header=TRUE)
 ```
 
 > ## Learning Objectives {.objectives}
@@ -152,7 +152,7 @@ difftime(birthdays, date1, units='weeks')
 > permits$isu_date <- as.Date(permits$isu_date, date_format)
 > permits$last_review_date <- as.Date(permits$last_review_date, date_format)
 > permits$comp_date <- as.Date(permits$comp_date, date_format)
->
+>```
 
 > ## Solution to Challenge 3 {.challenge}
 >
@@ -176,4 +176,4 @@ difftime(birthdays, date1, units='weeks')
 >
 > ```{r}
 > permits$total_time <- permits$comp_date - permits$rec_date
->
+>```
