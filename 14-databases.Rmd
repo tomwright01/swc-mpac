@@ -102,6 +102,7 @@ By default columns with the same name in each table to be joined are matched. We
 
 To join the `permits_sql` with the `regions_sql`:
 ```{r}
+permits_sql <- tbl(conn, "PERMITS")
 permits <- inner_join(permits_sql, regions_sql, by=c("region_id"="id"))
 ```
 

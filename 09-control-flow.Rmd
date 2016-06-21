@@ -9,6 +9,7 @@ minutes: 35
 source("tools/chunk-options.R")
 # Silently load in the data so the rest of the lesson works
 permits <- read.csv("data/permits_short.csv", header = TRUE)
+date_format <- '%m/%d/%Y'
 permits$rec_date <- as.Date(permits$rec_date, date_format)
 permits$add_date <- as.Date(permits$add_date, date_format)
 permits$isu_date <- as.Date(permits$isu_date, date_format)
