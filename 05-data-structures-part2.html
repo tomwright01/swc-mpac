@@ -167,7 +167,7 @@ cats</code></pre></div>
 </div>
 </section>
 <p>So far, you’ve seen the basics of manipulating data.frames with our cat data; now, let’s use those skills to digest a more realistic dataset. Lets read in the gapminder dataset that we downloaded previously:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gapminder &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data/gapminder-FiveYearData.csv&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gapminder &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data/permits_short.csv&quot;</span>)</code></pre></div>
 <aside class="callout panel panel-info">
 <div class="panel-heading">
 <h2 id="miscellaneous-tips"><span class="glyphicon glyphicon-pushpin"></span>Miscellaneous Tips</h2>
@@ -183,62 +183,50 @@ cats</code></pre></div>
 </ol>
 </div>
 </aside>
-<p>Let’s investigate gapminder a bit; the first thing we should always do is check out what the data looks like with <code>str</code>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(gapminder)</code></pre></div>
-<pre class="output"><code>&#39;data.frame&#39;:   1704 obs. of  6 variables:
- $ country  : Factor w/ 142 levels &quot;Afghanistan&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
- $ pop      : num  8425333 9240934 10267083 11537966 13079460 ...
- $ continent: Factor w/ 5 levels &quot;Africa&quot;,&quot;Americas&quot;,..: 3 3 3 3 3 3 3 3 3 3 ...
- $ lifeExp  : num  28.8 30.3 32 34 36.1 ...
- $ gdpPercap: num  779 821 853 836 740 ...
+<p>Let’s investigate permits_short a bit; the first thing we should always do is check out what the data looks like with <code>str</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(permits)</code></pre></div>
+<pre class="error"><code>Error in str(permits): object &#39;permits&#39; not found
 </code></pre>
 <p>We can also examine individual columns of the data.frame with our <code>typeof</code> function:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">typeof</span>(gapminder$year)</code></pre></div>
-<pre class="output"><code>[1] &quot;integer&quot;
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">typeof</span>(permits$roll_no)</code></pre></div>
+<pre class="error"><code>Error in typeof(permits$roll_no): object &#39;permits&#39; not found
 </code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">typeof</span>(gapminder$lifeExp)</code></pre></div>
-<pre class="output"><code>[1] &quot;double&quot;
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">typeof</span>(permits$city)</code></pre></div>
+<pre class="error"><code>Error in typeof(permits$city): object &#39;permits&#39; not found
 </code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">typeof</span>(gapminder$country)</code></pre></div>
-<pre class="output"><code>[1] &quot;integer&quot;
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">typeof</span>(permits$region)</code></pre></div>
+<pre class="error"><code>Error in typeof(permits$region): object &#39;permits&#39; not found
 </code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(gapminder$country)</code></pre></div>
-<pre class="output"><code> Factor w/ 142 levels &quot;Afghanistan&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(permits$region)</code></pre></div>
+<pre class="error"><code>Error in str(permits$region): object &#39;permits&#39; not found
 </code></pre>
-<p>We can also interrogate the data.frame for information about its dimensions; remembering that <code>str(gapminder)</code> said there were 1704 observations of 6 variables in gapminder, what do you think the following will produce, and why?</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">length</span>(gapminder)</code></pre></div>
-<pre class="output"><code>[1] 6
+<p>We can also interrogate the data.frame for information about its dimensions; remembering that <code>str(permits_short)</code> said there were 569 observations of 15 variables in gapminder, what do you think the following will produce, and why?</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">length</span>(permits)</code></pre></div>
+<pre class="error"><code>Error in eval(expr, envir, enclos): object &#39;permits&#39; not found
 </code></pre>
-<p>A fair guess would have been to say that the length of a data.frame would be the number of rows it has (1704), but this is not the case; remember, a data.frame is a <em>list of vectors and factors</em>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">typeof</span>(gapminder)</code></pre></div>
-<pre class="output"><code>[1] &quot;list&quot;
+<p>A fair guess would have been to say that the length of a data.frame would be the number of rows it has (569), but this is not the case; remember, a data.frame is a <em>list of vectors and factors</em>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">typeof</span>(permits)</code></pre></div>
+<pre class="error"><code>Error in typeof(permits): object &#39;permits&#39; not found
 </code></pre>
-<p>When <code>length</code> gave us 6, it’s because gapminder is built out of a list of 6 columns. To get the number of rows and columns in our dataset, try:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">nrow</span>(gapminder)</code></pre></div>
-<pre class="output"><code>[1] 1704
+<p>When <code>length</code> gave us 15, it’s because gapminder is built out of a list of 15 columns. To get the number of rows and columns in our dataset, try:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">nrow</span>(permits)</code></pre></div>
+<pre class="error"><code>Error in nrow(permits): object &#39;permits&#39; not found
 </code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ncol</span>(gapminder)</code></pre></div>
-<pre class="output"><code>[1] 6
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ncol</span>(permits)</code></pre></div>
+<pre class="error"><code>Error in ncol(permits): object &#39;permits&#39; not found
 </code></pre>
 <p>Or, both at once:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(gapminder)</code></pre></div>
-<pre class="output"><code>[1] 1704    6
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(permits_short)</code></pre></div>
+<pre class="error"><code>Error in eval(expr, envir, enclos): object &#39;permits_short&#39; not found
 </code></pre>
 <p>We’ll also likely want to know what the titles of all the columns are, so we can ask for them later:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">colnames</span>(gapminder)</code></pre></div>
-<pre class="output"><code>[1] &quot;country&quot;   &quot;year&quot;      &quot;pop&quot;       &quot;continent&quot; &quot;lifeExp&quot;   &quot;gdpPercap&quot;
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">colnames</span>(permits_short)</code></pre></div>
+<pre class="error"><code>Error in is.data.frame(x): object &#39;permits_short&#39; not found
 </code></pre>
 <p>At this stage, it’s important to ask ourselves if the structure R is reporting matches our intuition or expectations; do the basic data types reported for each column make sense? If not, we need to sort any problems out now before they turn into bad surprises down the road, using what we’ve learned about how R interprets data, and the importance of <em>strict consistency</em> in how we record our data.</p>
 <p>Once we’re happy that the data types and structures seem reasonable, it’s time to start digging into our data proper. Check out the first few lines:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(gapminder)</code></pre></div>
-<pre class="output"><code>      country year      pop continent lifeExp gdpPercap
-1 Afghanistan 1952  8425333      Asia  28.801  779.4453
-2 Afghanistan 1957  9240934      Asia  30.332  820.8530
-3 Afghanistan 1962 10267083      Asia  31.997  853.1007
-4 Afghanistan 1967 11537966      Asia  34.020  836.1971
-5 Afghanistan 1972 13079460      Asia  36.088  739.9811
-6 Afghanistan 1977 14880372      Asia  38.438  786.1134
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(permits_short)</code></pre></div>
+<pre class="error"><code>Error in head(permits_short): object &#39;permits_short&#39; not found
 </code></pre>
 <p>To make sure our analysis is reproducible, we should put the code into a script file so we can come back to it later.</p>
 <section class="challenge panel panel-success">
@@ -246,7 +234,7 @@ cats</code></pre></div>
 <h2 id="challenge-2"><span class="glyphicon glyphicon-pencil"></span>Challenge 2</h2>
 </div>
 <div class="panel-body">
-<p>Go to file -&gt; new file -&gt; R script, and write an R script to load in the gapminder dataset. Put it in the <code>scripts/</code> directory and add it to version control.</p>
+<p>Go to file -&gt; new file -&gt; R script, and write an R script to load in the permits_short dataset. Put it in the <code>scripts/</code> directory and add it to version control.</p>
 <p>Run the script using the <code>source</code> function, using the file path as its argument (or by pressing the “source” button in RStudio).</p>
 </div>
 </section>
@@ -255,7 +243,7 @@ cats</code></pre></div>
 <h2 id="challenge-3"><span class="glyphicon glyphicon-pencil"></span>Challenge 3</h2>
 </div>
 <div class="panel-body">
-<p>Read the output of <code>str(gapminder)</code> again; this time, use what you’ve learned about factors, lists and vectors, as well as the output of functions like <code>colnames</code> and <code>dim</code> to explain what everything that <code>str</code> prints out for gapminder means. If there are any parts you can’t interpret, discuss with your neighbors!</p>
+<p>Read the output of <code>str(permits_short)</code> again; this time, use what you’ve learned about factors, lists and vectors, as well as the output of functions like <code>colnames</code> and <code>dim</code> to explain what everything that <code>str</code> prints out for gapminder means. If there are any parts you can’t interpret, discuss with your neighbors!</p>
 </div>
 </section>
 <h2 id="challenge-solutions">Challenge solutions</h2>
@@ -274,10 +262,10 @@ df &lt;-<span class="st"> </span><span class="kw">cbind</span>(df, <span class="
 <h2 id="solution-to-challenge-2"><span class="glyphicon glyphicon-pencil"></span>Solution to Challenge 2</h2>
 </div>
 <div class="panel-body">
-<p>The contents of <code>script/load-gapminder.R</code>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gapminder &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="dt">file =</span> <span class="st">&quot;data/gapminder-FiveYearData.csv&quot;</span>)</code></pre></div>
-<p>To run the script and load the data into the <code>gapminder</code> variable:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">source</span>(<span class="dt">file =</span> <span class="st">&quot;scripts/load-gapminder.R&quot;</span>)</code></pre></div>
+<p>The contents of <code>script/load-permits.R</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">permits &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="dt">file =</span> <span class="st">&quot;data/permits_short.csv&quot;</span>)</code></pre></div>
+<p>To run the script and load the data into the <code>permits</code> variable:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">source</span>(<span class="dt">file =</span> <span class="st">&quot;scripts/load-permits.R&quot;</span>)</code></pre></div>
 </div>
 </section>
 <section class="challenge panel panel-success">
@@ -285,7 +273,7 @@ df &lt;-<span class="st"> </span><span class="kw">cbind</span>(df, <span class="
 <h2 id="solution-to-challenge-3"><span class="glyphicon glyphicon-pencil"></span>Solution to Challenge 3</h2>
 </div>
 <div class="panel-body">
-<p>The object <code>gapminder</code> is a data frame with columns - <code>country</code> and <code>continent</code> are factors. - <code>year</code> is an integer vector. - <code>pop</code>, <code>lifeExp</code>, and <code>gdpPercap</code> are numeric vectors.</p>
+<p>The object <code>permits</code> is a data frame with columns - <code>roll_no</code> is a numeric vector. - <code>rec_date</code>, <code>add_date</code>, <code>isu_date</code>, <code>last_review_date</code>, <code>comp_date</code>, <code>type</code>, <code>zone</code> and <code>city</code> are factors. - <code>current_value</code>, <code>forcasted_value</code>, <code>region</code> and <code>mpac_wd</code> are integer vectors.</p>
 </div>
 </section>
         </div>

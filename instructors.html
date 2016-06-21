@@ -30,11 +30,26 @@
           <h2 class="subtitle">Instructor’s Guide</h2>
           <h2 id="timing">Timing</h2>
 <p>Leave about 30 minutes at the start of each workshop and another 15 mins at the start of each sesson for technical difficulties like WiFi and installing things (even if you asked students to install in advance, longer if not).</p>
+<h2 id="setting-up-git-in-rstudio">Setting up git in RStudio</h2>
+<p>There can be difficulties linking git to RStudio depending on the operating system and the version of the operating system. To make sure git is properly installed and configured, the learners should go to the Options window in the RStudio application.</p>
+<ul>
+<li><strong>Mac OS X:</strong></li>
+<li>Go RStudio -&gt; Preferences… -&gt; Git/SVN</li>
+<li>Check and see whether there is a path to a file in the “Git executable” window. If not, the next challenge is figuring out where Git is located.</li>
+<li>In the terminal enter <code>which git</code> and you will get a path to the git executable. In the “Git executable” window you may have difficulties finding the directory since OS X hides many of the operating system files. While the file selection window is open, pressing “Command-Shift-G” will pop up a text entry box where you will be able to type or paste in the full path to your git executable: e.g. /usr/bin/git or whatever else it might be.</li>
+<li><strong>Windows:</strong>
+<ul>
+<li>Go Tools -&gt; Global options… -&gt; Git/SVN</li>
+<li>If you use the Software Carpentry Installer, then ‘git.exe’ should be installed at ‘C:/Program Files/Git/bin/git.exe’</li>
+</ul></li>
+</ul>
+<p>To prevent the learners from having to re-enter their password each time they push a commit to GitHub, this command (which can be run from a bash prompt) will make it so they only have to enter their password once:</p>
+<pre><code>git config --global credential.helper &#39;cache --timeout=10000000&#39;</code></pre>
 <h2 id="pulling-in-data">Pulling in data</h2>
 <p>The easiest way to get the data used in this lesson during a bootcamp is to have attendees run the following:</p>
 <pre class="shell"><code>git remote add data https://github.com/resbaz/r-novice-gapminder-files
 git pull data master</code></pre>
-<p>If Git is not being taught as part of the workshop the raw data can be downloaded from the folloing urls: <a href="https://raw.githubusercontent.com/swcarpentry/r-novice-gapminder/gh-pages/data/gapminder-FiveYearData.csv">gapminder-FiveYearData</a> <a href="https://raw.githubusercontent.com/swcarpentry/r-novice-gapminder/gh-pages/data/gapminder_wide.csv">gapminder-FiveYearData-Wide</a></p>
+<p>If Git is not being taught as part of the workshop the raw data can be downloaded from the following urls: <a href="https://raw.githubusercontent.com/swcarpentry/r-novice-gapminder/gh-pages/data/gapminder-FiveYearData.csv">gapminder-FiveYearData</a> and <a href="https://raw.githubusercontent.com/swcarpentry/r-novice-gapminder/gh-pages/data/gapminder_wide.csv">gapminder-FiveYearData-Wide</a></p>
 <p>attendees can use the <code>File - Save As</code> dialog in their browser to save the file.</p>
 <h2 id="overall">Overall</h2>
 <p>Make sure to emphasise good practices: put code in scripts, and make sure they’re version controlled. Encourage students to create script files for challenges.</p>

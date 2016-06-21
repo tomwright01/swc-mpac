@@ -30,7 +30,7 @@
           <h2 class="subtitle">Dataframe manipulation with dplyr</h2>
           <section class="objectives panel panel-warning">
 <div class="panel-heading">
-<h2><span class="glyphicon glyphicon-certificate"></span>Learning Objectives</h2>
+<h2 id="learning-objectives"><span class="glyphicon glyphicon-certificate"></span>Learning Objectives</h2>
 </div>
 <div class="panel-body">
 <ul>
@@ -39,14 +39,14 @@
 </div>
 </section>
 <p>Manipulation of dataframes means many things to many researchers, we often select certain observations (rows) or variables (columns), we often group the data by a certain variable(s), or we even calculate summary statistics. We can do these operations using the normal base R operations:</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mean</span>(gapminder[gapminder$continent ==<span class="st"> &quot;Africa&quot;</span>, <span class="st">&quot;gdpPercap&quot;</span>])</code></pre>
-<pre class="output"><code>[1] 2193.755
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mean</span>(permits[permits$city ==<span class="st"> &quot;Toronto&quot;</span>, <span class="st">&quot;current_value&quot;</span>])</code></pre></div>
+<pre class="output"><code>[1] NA
 </code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mean</span>(gapminder[gapminder$continent ==<span class="st"> &quot;Americas&quot;</span>, <span class="st">&quot;gdpPercap&quot;</span>])</code></pre>
-<pre class="output"><code>[1] 7136.11
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mean</span>(permits[permits$city ==<span class="st"> &quot;Ottawa&quot;</span>, <span class="st">&quot;current_value&quot;</span>])</code></pre></div>
+<pre class="output"><code>[1] NA
 </code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mean</span>(gapminder[gapminder$continent ==<span class="st"> &quot;Asia&quot;</span>, <span class="st">&quot;gdpPercap&quot;</span>])</code></pre>
-<pre class="output"><code>[1] 7902.15
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mean</span>(permits[permits$city ==<span class="st"> &quot;Barrie&quot;</span>, <span class="st">&quot;current_value&quot;</span>])</code></pre></div>
+<pre class="output"><code>[1] NA
 </code></pre>
 <p>But this isn’t very <em>nice</em> because there is a fair bit of repetition. Repeating yourself will cost you time, both now and later, and potentially introduce some nasty bugs.</p>
 <h2 id="the-dplyr-package">The <code>dplyr</code> package</h2>
@@ -60,150 +60,236 @@
 <li><code>mutate()</code></li>
 </ol>
 <p>If you have have not installed this package earlier, please do so:</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">&#39;dplyr&#39;</span>)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">&#39;dplyr&#39;</span>)</code></pre></div>
 <p>Now let’s load the package:</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(dplyr)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(dplyr)</code></pre></div>
 <h2 id="using-select">Using select()</h2>
 <p>If, for example, we wanted to move forward with only a few of the variables in our dataframe we could use the <code>select()</code> function. This will keep only the variables you select.</p>
-<pre class="sourceCode r"><code class="sourceCode r">year_country_gdp &lt;-<span class="st"> </span><span class="kw">select</span>(gapminder,year,country,gdpPercap)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">year_city_value &lt;-<span class="st"> </span><span class="kw">select</span>(permits,isu_year,city,current_value)</code></pre></div>
 <div class="figure">
 <img src="fig/13-dplyr-fig1.png" />
+
 </div>
-<p>If we open up <code>year_country_gdp</code> we’ll see that it only contains the year, country and gdpPercap. Above we used ‘normal’ grammar, but the strengths of <code>dplyr</code> lie in combining several functions using pipes. Since the pipes grammar is unlike anything we’ve seen in R before, let’s repeat what we’ve done above using pipes.</p>
-<pre class="sourceCode r"><code class="sourceCode r">year_country_gdp &lt;-<span class="st"> </span>gapminder %&gt;%<span class="st"> </span><span class="kw">select</span>(year,country,gdpPercap)</code></pre>
+<p>If we open up <code>year_city_value</code> we’ll see that it only contains the year, country and gdpPercap. Above we used ‘normal’ grammar, but the strengths of <code>dplyr</code> lie in combining several functions using pipes. Since the pipes grammar is unlike anything we’ve seen in R before, let’s repeat what we’ve done above using pipes.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">year_city_value &lt;-<span class="st"> </span>permits %&gt;%<span class="st"> </span><span class="kw">select</span>(year,city,current_value)</code></pre></div>
+<pre class="error"><code>Error in eval(expr, envir, enclos): object &#39;year&#39; not found
+</code></pre>
 <p>To help you understand why we wrote that in that way, let’s walk through it step by step. First we summon the gapminder dataframe and pass it on, using the pipe symbol <code>%&gt;%</code>, to the next step, which is the <code>select()</code> function. In this case we don’t specify which data object we use in the <code>select()</code> function since in gets that from the previous pipe. <strong>Fun Fact</strong>: There is a good chance you have encountered pipes before in the shell. In R, a pipe symbol is <code>%&gt;%</code> while in the shell it is <code>|</code> but the concept is the same!</p>
 <h2 id="using-filter">Using filter()</h2>
 <p>If we now wanted to move forward with the above, but only with European countries, we can combine <code>select</code> and <code>filter</code></p>
-<pre class="sourceCode r"><code class="sourceCode r">year_country_gdp_euro &lt;-<span class="st"> </span>gapminder %&gt;%
-<span class="st">    </span><span class="kw">filter</span>(continent==<span class="st">&quot;Europe&quot;</span>) %&gt;%
-<span class="st">    </span><span class="kw">select</span>(year,country,gdpPercap)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">year_city_value_NewBuild &lt;-<span class="st"> </span>permits %&gt;%
+<span class="st">    </span><span class="kw">filter</span>(mpac_wd==<span class="st">&quot;New Building&quot;</span>) %&gt;%
+<span class="st">    </span><span class="kw">select</span>(year,city,current_value)</code></pre></div>
+<pre class="error"><code>Error in eval(expr, envir, enclos): object &#39;year&#39; not found
+</code></pre>
 <section class="challenge panel panel-success">
 <div class="panel-heading">
-<h2><span class="glyphicon glyphicon-pencil"></span>Challenge 1</h2>
+<h2 id="challenge-1"><span class="glyphicon glyphicon-pencil"></span>Challenge 1</h2>
 </div>
 <div class="panel-body">
-<p>Write a single command (which can span multiple lines and includes pipes) that will produce a dataframe that has the African values for <code>lifeExp</code>, <code>country</code> and <code>year</code>, but not for other Continents. How many rows does your dataframe have and why?</p>
+<p>Write a single command (which can span multiple lines and includes pipes) that will produce a dataframe that has the values for <code>current_value</code>, <code>city</code> and <code>year</code>, for work type (mpac_wd):Garages. How many rows does your dataframe have and why?</p>
 </div>
 </section>
 <p>As with last time, first we pass the gapminder dataframe to the <code>filter()</code> function, then we pass the filtered version of the gapminder dataframe to the <code>select()</code> function. <strong>Note:</strong> The order of operations is very important in this case. If we used ‘select’ first, filter would not be able to find the variable continent since we would have removed it in the previous step.</p>
 <h2 id="using-group_by-and-summarize">Using group_by() and summarize()</h2>
-<p>Now, we were supposed to be reducing the error prone repetitiveness of what can be done with base R, but up to now we haven’t done that since we would have to repeat the above for each continent. Instead of <code>filter()</code>, which will only pass observations that meet your criteria (in the above: <code>continent==&quot;Europe&quot;</code>), we can use <code>group_by()</code>, which will essentially use every unique criteria that you could have used in filter.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(gapminder)</code></pre>
-<pre class="output"><code>&#39;data.frame&#39;:   1704 obs. of  6 variables:
- $ country  : Factor w/ 142 levels &quot;Afghanistan&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
- $ pop      : num  8425333 9240934 10267083 11537966 13079460 ...
- $ continent: Factor w/ 5 levels &quot;Africa&quot;,&quot;Americas&quot;,..: 3 3 3 3 3 3 3 3 3 3 ...
- $ lifeExp  : num  28.8 30.3 32 34 36.1 ...
- $ gdpPercap: num  779 821 853 836 740 ...
+<p>Now, we were supposed to be reducing the error prone repetitiveness of what can be done with base R, but up to now we haven’t done that since we would have to repeat the above for each continent. Instead of <code>filter()</code>, which will only pass observations that meet your criteria (in the above: <code>mpac_wd==&quot;Garage&quot;</code>), we can use <code>group_by()</code>, which will essentially use every unique criteria that you could have used in filter.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(permits)</code></pre></div>
+<pre class="output"><code>&#39;data.frame&#39;:   569 obs. of  17 variables:
+ $ roll_no         : num  1.80e+18 1.20e+18 2.11e+18 3.74e+18 1.94e+18 ...
+ $ rec_date        : Date, format: &quot;2013-11-04&quot; &quot;2015-10-15&quot; ...
+ $ add_date        : Date, format: &quot;2014-07-18&quot; &quot;2015-11-26&quot; ...
+ $ isu_date        : Date, format: &quot;2013-10-23&quot; &quot;2014-09-16&quot; ...
+ $ last_review_date: Date, format: &quot;2014-10-02&quot; &quot;2015-09-11&quot; ...
+ $ comp_date       : Date, format: &quot;2015-01-02&quot; &quot;2016-01-22&quot; ...
+ $ minor2          : Factor w/ 2 levels &quot;Major&quot;,&quot;Minor&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+ $ current_value   : int  805000 434000 405000 NA 594000 284000 495000 672000 370000 664000 ...
+ $ forecasted_value: int  NA NA NA NA NA NA NA NA NA NA ...
+ $ reg             : Factor w/ 27 levels &quot;01 Cornwall&quot;,..: 9 6 11 22 10 8 3 10 11 3 ...
+ $ zone            : Factor w/ 7 levels &quot;Zone 1&quot;,&quot;Zone 2&quot;,..: 3 3 2 1 3 4 6 3 2 6 ...
+ $ region          : int  13 6 15 27 14 9 3 14 15 3 ...
+ $ mpac_wd0        : int  1 1 1 1 1 1 1 1 1 1 ...
+ $ mpac_wd         : Factor w/ 19 levels &quot;Addition&quot;,&quot;Alterations/Renovations&quot;,..: 10 10 10 10 10 10 10 10 10 10 ...
+ $ city            : Factor w/ 27 levels &quot;Barrie&quot;,&quot;Bracebridge&quot;,..: 7 26 13 27 19 25 15 19 13 15 ...
+ $ total_time      :Class &#39;difftime&#39;  atomic [1:569] 424 99 445 726 512 547 332 397 473 NA ...
+  .. ..- attr(*, &quot;units&quot;)= chr &quot;days&quot;
+ $ isu_year        : int  2013 2014 2012 2012 2012 2014 2012 2013 2013 2016 ...
 </code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(gapminder %&gt;%<span class="st"> </span><span class="kw">group_by</span>(continent))</code></pre>
-<pre class="output"><code>Classes &#39;grouped_df&#39;, &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;: 1704 obs. of  6 variables:
- $ country  : Factor w/ 142 levels &quot;Afghanistan&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
- $ pop      : num  8425333 9240934 10267083 11537966 13079460 ...
- $ continent: Factor w/ 5 levels &quot;Africa&quot;,&quot;Americas&quot;,..: 3 3 3 3 3 3 3 3 3 3 ...
- $ lifeExp  : num  28.8 30.3 32 34 36.1 ...
- $ gdpPercap: num  779 821 853 836 740 ...
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(permits %&gt;%<span class="st"> </span><span class="kw">group_by</span>(mpac_wd))</code></pre></div>
+<pre class="output"><code>Classes &#39;grouped_df&#39;, &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;: 569 obs. of  17 variables:
+ $ roll_no         : num  1.80e+18 1.20e+18 2.11e+18 3.74e+18 1.94e+18 ...
+ $ rec_date        : Date, format: &quot;2013-11-04&quot; &quot;2015-10-15&quot; ...
+ $ add_date        : Date, format: &quot;2014-07-18&quot; &quot;2015-11-26&quot; ...
+ $ isu_date        : Date, format: &quot;2013-10-23&quot; &quot;2014-09-16&quot; ...
+ $ last_review_date: Date, format: &quot;2014-10-02&quot; &quot;2015-09-11&quot; ...
+ $ comp_date       : Date, format: &quot;2015-01-02&quot; &quot;2016-01-22&quot; ...
+ $ minor2          : Factor w/ 2 levels &quot;Major&quot;,&quot;Minor&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+ $ current_value   : int  805000 434000 405000 NA 594000 284000 495000 672000 370000 664000 ...
+ $ forecasted_value: int  NA NA NA NA NA NA NA NA NA NA ...
+ $ reg             : Factor w/ 27 levels &quot;01 Cornwall&quot;,..: 9 6 11 22 10 8 3 10 11 3 ...
+ $ zone            : Factor w/ 7 levels &quot;Zone 1&quot;,&quot;Zone 2&quot;,..: 3 3 2 1 3 4 6 3 2 6 ...
+ $ region          : int  13 6 15 27 14 9 3 14 15 3 ...
+ $ mpac_wd0        : int  1 1 1 1 1 1 1 1 1 1 ...
+ $ mpac_wd         : Factor w/ 19 levels &quot;Addition&quot;,&quot;Alterations/Renovations&quot;,..: 10 10 10 10 10 10 10 10 10 10 ...
+ $ city            : Factor w/ 27 levels &quot;Barrie&quot;,&quot;Bracebridge&quot;,..: 7 26 13 27 19 25 15 19 13 15 ...
+ $ total_time      :Class &#39;difftime&#39;  atomic [1:569] 424 99 445 726 512 547 332 397 473 NA ...
+  .. ..- attr(*, &quot;units&quot;)= chr &quot;days&quot;
+ $ isu_year        : int  2013 2014 2012 2012 2012 2014 2012 2013 2013 2016 ...
  - attr(*, &quot;vars&quot;)=List of 1
-  ..$ : symbol continent
+  ..$ : symbol mpac_wd
  - attr(*, &quot;drop&quot;)= logi TRUE
- - attr(*, &quot;indices&quot;)=List of 5
-  ..$ : int  24 25 26 27 28 29 30 31 32 33 ...
-  ..$ : int  48 49 50 51 52 53 54 55 56 57 ...
+ - attr(*, &quot;indices&quot;)=List of 19
+  ..$ : int  135 136 137 138 139 140 141 142 143 144 ...
+  ..$ : int  163 164 165 166 167 168 169 170 171 172 ...
+  ..$ : int  290 293 329 330 331 332 389 398 399 401 ...
+  ..$ : int  298 300 302 303 333 334 335 336 407 418 ...
+  ..$ : int  337 543
+  ..$ : int 456
+  ..$ : int  273 274 275 276 277 278 279 280 281 282 ...
+  ..$ : int  297 536
+  ..$ : int  339 340 441
   ..$ : int  0 1 2 3 4 5 6 7 8 9 ...
-  ..$ : int  12 13 14 15 16 17 18 19 20 21 ...
-  ..$ : int  60 61 62 63 64 65 66 67 68 69 ...
- - attr(*, &quot;group_sizes&quot;)= int  624 300 396 360 24
- - attr(*, &quot;biggest_group_size&quot;)= int 624
- - attr(*, &quot;labels&quot;)=&#39;data.frame&#39;:  5 obs. of  1 variable:
-  ..$ continent: Factor w/ 5 levels &quot;Africa&quot;,&quot;Americas&quot;,..: 1 2 3 4 5
+  ..$ : int  354 526
+  ..$ : int  355 356 357 358 359 360 361 362 363 364 ...
+  ..$ : int  422 453 495
+  ..$ : int  291 294 365 366 397 400 403 415 419 420 ...
+  ..$ : int  304 367 368 369 390 402 408 464 474
+  ..$ : int 370
+  ..$ : int  371 372 373 374 404 468 522 534 555 561
+  ..$ : int  287 288 375 376 377 378 379 380 381 382 ...
+  ..$ : int  295 385 386 473 485 487 523 524 527 535 ...
+ - attr(*, &quot;group_sizes&quot;)= int  42 154 27 30 2 1 17 2 3 179 ...
+ - attr(*, &quot;biggest_group_size&quot;)= int 179
+ - attr(*, &quot;labels&quot;)=&#39;data.frame&#39;:  19 obs. of  1 variable:
+  ..$ mpac_wd: Factor w/ 19 levels &quot;Addition&quot;,&quot;Alterations/Renovations&quot;,..: 1 2 3 4 5 6 7 8 9 10 ...
   ..- attr(*, &quot;vars&quot;)=List of 1
-  .. ..$ : symbol continent
+  .. ..$ : symbol mpac_wd
   ..- attr(*, &quot;drop&quot;)= logi TRUE
 </code></pre>
-<p>You will notice that the structure of the dataframe where we used <code>group_by()</code> (<code>grouped_df</code>) is not the same as the original <code>gapminder</code> (<code>data.frame</code>). A <code>grouped_df</code> can be thought of as a <code>list</code> where each item in the <code>list</code>is a <code>data.frame</code> which contains only the rows that correspond to the a particular value <code>continent</code> (at least in the example above).</p>
+<p>You will notice that the structure of the dataframe where we used <code>group_by()</code> (<code>grouped_df</code>) is not the same as the original <code>permits</code> (<code>data.frame</code>). A <code>grouped_df</code> can be thought of as a <code>list</code> where each item in the <code>list</code>is a <code>data.frame</code> which contains only the rows that correspond to the a particular value <code>mapc_wd</code> (at least in the example above).</p>
 <div class="figure">
 <img src="fig/13-dplyr-fig2.png" />
+
 </div>
 <h2 id="using-summarize">Using summarize()</h2>
-<p>The above was a bit on the uneventful side because <code>group_by()</code> much more exciting in conjunction with <code>summarize()</code>. This will allow use to create new variable(s) by using functions that repeat for each of the continent-specific data frames. That is to say, using the <code>group_by()</code> function, we split our original dataframe into multiple pieces, then we can run functions (e.g. <code>mean()</code> or <code>sd()</code>) within <code>summarize()</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r">gdp_bycontinents &lt;-<span class="st"> </span>gapminder %&gt;%
-<span class="st">    </span><span class="kw">group_by</span>(continent) %&gt;%
-<span class="st">    </span><span class="kw">summarize</span>(<span class="dt">mean_gdpPercap=</span><span class="kw">mean</span>(gdpPercap))</code></pre>
+<p>The above was a bit on the uneventful side because <code>group_by()</code> is much more exciting in conjunction with <code>summarize()</code>. This will allow us to create new variable(s) by using functions that repeat for each of the continent-specific data frames. That is to say, using the <code>group_by()</code> function, we split our original dataframe into multiple pieces, then we can run functions (e.g. <code>mean()</code> or <code>sd()</code>) within <code>summarize()</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">value_by_city &lt;-<span class="st"> </span>permits %&gt;%
+<span class="st">    </span><span class="kw">group_by</span>(city) %&gt;%
+<span class="st">    </span><span class="kw">summarize</span>(<span class="dt">mean_value_per_city=</span><span class="kw">mean</span>(current_value))</code></pre></div>
+<aside class="callout panel panel-info">
+<div class="panel-heading">
+<h2 id="note"><span class="glyphicon glyphicon-pushpin"></span>Note:</h2>
+</div>
+<div class="panel-body">
+<p>The <code>mean_value_per_city</code> for Barrie is NA (missing). This is because some of the current_value entries in the original data are missing. Remember, the <code>mean()</code> function takes an argument <code>na.rm=TRUE</code> to ignore these value.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">value_by_city &lt;-<span class="st"> </span>permits %&gt;%
+<span class="st">   </span><span class="kw">group_by</span>(city) %&gt;%
+<span class="st">   </span><span class="kw">summarize</span>(<span class="dt">mean_value_per_city=</span><span class="kw">mean</span>(current_value, <span class="dt">na.rm=</span><span class="ot">TRUE</span>))</code></pre></div>
+</div>
+</aside>
 <div class="figure">
 <img src="fig/13-dplyr-fig3.png" />
+
 </div>
-<p>That allowed us to calculate the mean gdpPercap for each continent, but it gets even better.</p>
+<p>That allowed us to calculate the mean current_value for each continent, but it gets even better.</p>
 <section class="challenge panel panel-success">
 <div class="panel-heading">
-<h2><span class="glyphicon glyphicon-pencil"></span>Challenge 2</h2>
+<h2 id="challenge-2"><span class="glyphicon glyphicon-pencil"></span>Challenge 2</h2>
 </div>
 <div class="panel-body">
-<p>Calculate the average life expectancy per country. Which had the longest life expectancy and which had the shortest life expectancy?</p>
+<p>Calculate the average processing time (total_time) per city. Which had the longest processing time and which had the shortest processing time?</p>
 </div>
 </section>
-<p>The function <code>group_by()</code> allows us to group by multiple variables. Let’s group by <code>year</code> and <code>continent</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r">gdp_bycontinents_byyear &lt;-<span class="st"> </span>gapminder %&gt;%
-<span class="st">    </span><span class="kw">group_by</span>(continent,year) %&gt;%
-<span class="st">    </span><span class="kw">summarize</span>(<span class="dt">mean_gdpPercap=</span><span class="kw">mean</span>(gdpPercap))</code></pre>
+<p>The function <code>group_by()</code> allows us to group by multiple variables. Let’s group by <code>city</code> and <code>isu_year</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">processingTime_bycity_byyear &lt;-<span class="st"> </span>permits %&gt;%
+<span class="st">    </span><span class="kw">group_by</span>(city,isu_year) %&gt;%
+<span class="st">    </span><span class="kw">summarize</span>(<span class="dt">mean_processingTime=</span><span class="kw">mean</span>(total_time, <span class="dt">na.rm=</span><span class="ot">TRUE</span>))</code></pre></div>
 <p>That is already quite powerful, but it gets even better! You’re not limited to defining 1 new variable in <code>summarize()</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r">gdp_pop_bycontinents_byyear &lt;-<span class="st"> </span>gapminder %&gt;%
-<span class="st">    </span><span class="kw">group_by</span>(continent,year) %&gt;%
-<span class="st">    </span><span class="kw">summarize</span>(<span class="dt">mean_gdpPercap=</span><span class="kw">mean</span>(gdpPercap),
-              <span class="dt">sd_gdpPercap=</span><span class="kw">sd</span>(gdpPercap),
-              <span class="dt">mean_pop=</span><span class="kw">mean</span>(pop),
-              <span class="dt">sd_pop=</span><span class="kw">sd</span>(pop))</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">processingTime_Value_byCity_byYear &lt;-<span class="st"> </span>permits %&gt;%
+<span class="st">    </span><span class="kw">group_by</span>(city, isu_year) %&gt;%
+<span class="st">    </span><span class="kw">summarize</span>(<span class="dt">mean_processTime=</span><span class="kw">mean</span>(total_time, <span class="dt">na.rm=</span><span class="ot">TRUE</span>),
+              <span class="dt">sd_processTime=</span><span class="kw">sd</span>(total_time, <span class="dt">na.rm=</span><span class="ot">TRUE</span>),
+              <span class="dt">mean_Value=</span><span class="kw">mean</span>(current_value, <span class="dt">na.rm=</span><span class="ot">TRUE</span>),
+              <span class="dt">sd_Value=</span><span class="kw">sd</span>(current_value, <span class="dt">na.rm=</span><span class="ot">TRUE</span>))</code></pre></div>
+<aside class="callout panel panel-info">
+<div class="panel-heading">
+<h2 id="tip"><span class="glyphicon glyphicon-pushpin"></span>Tip</h2>
+</div>
+<div class="panel-body">
+<p>A useful function for use with summarize is <code>n()</code>. It returns the number of records in each group.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">processingTime_Value_byCity_byYear &lt;-<span class="st"> </span>permits %&gt;%
+<span class="st">   </span><span class="kw">group_by</span>(city, isu_year) %&gt;%
+<span class="st">   </span><span class="kw">summarize</span>(<span class="dt">mean_processTime=</span><span class="kw">mean</span>(total_time, <span class="dt">na.rm=</span><span class="ot">TRUE</span>),
+             <span class="dt">count=</span><span class="kw">n</span>())</code></pre></div>
+</div>
+</aside>
 <h2 id="using-mutate">Using mutate()</h2>
 <p>We can also create new variables prior to (or even after) summarizing information using <code>mutate()</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r">gdp_pop_bycontinents_byyear &lt;-<span class="st"> </span>gapminder %&gt;%
-<span class="st">    </span><span class="kw">mutate</span>(<span class="dt">gdp_billion=</span>gdpPercap*pop/<span class="dv">10</span>^<span class="dv">9</span>) %&gt;%
-<span class="st">    </span><span class="kw">group_by</span>(continent,year) %&gt;%
-<span class="st">    </span><span class="kw">summarize</span>(<span class="dt">mean_gdpPercap=</span><span class="kw">mean</span>(gdpPercap),
-              <span class="dt">sd_gdpPercap=</span><span class="kw">sd</span>(gdpPercap),
-              <span class="dt">mean_pop=</span><span class="kw">mean</span>(pop),
-              <span class="dt">sd_pop=</span><span class="kw">sd</span>(pop),
-              <span class="dt">mean_gdp_billion=</span><span class="kw">mean</span>(gdp_billion),
-              <span class="dt">sd_gdp_billion=</span><span class="kw">sd</span>(gdp_billion))</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">processingTime_Value_byCity_byYear &lt;-<span class="st"> </span>permits %&gt;%
+<span class="st">    </span><span class="kw">mutate</span>(<span class="dt">value_millions=</span>current_value /<span class="st"> </span><span class="fl">1e6</span>) %&gt;%
+<span class="st">    </span><span class="kw">group_by</span>(city,isu_year) %&gt;%
+<span class="st">    </span><span class="kw">summarize</span>(<span class="dt">mean_processTime=</span><span class="kw">mean</span>(total_time, <span class="dt">na.rm=</span><span class="ot">TRUE</span>),
+              <span class="dt">sd_processTime=</span><span class="kw">sd</span>(total_time, <span class="dt">na.rm=</span><span class="ot">TRUE</span>),
+              <span class="dt">mean_Value=</span><span class="kw">mean</span>(current_value, <span class="dt">na.rm=</span><span class="ot">TRUE</span>),
+              <span class="dt">sd_Value=</span><span class="kw">sd</span>(current_value, <span class="dt">na.rm=</span><span class="ot">TRUE</span>),
+              <span class="dt">mean_Value_million=</span><span class="kw">mean</span>(value_millions),
+              <span class="dt">sd_Value_million=</span><span class="kw">sd</span>(value_millions))</code></pre></div>
 <section class="challenge panel panel-success">
 <div class="panel-heading">
-<h2><span class="glyphicon glyphicon-pencil"></span>Advanced Challenge</h2>
+<h2 id="advanced-challenge"><span class="glyphicon glyphicon-pencil"></span>Advanced Challenge</h2>
 </div>
 <div class="panel-body">
-<p>Calculate the average life expectancy in 2002 of 2 randomly selected countries for each continent. Then arrange the continent names in reverse order. <strong>Hint:</strong> Use the <code>dplyr</code> functions <code>arrange()</code> and <code>sample_n()</code>, they have similar syntax to other dplyr functions.</p>
+<p>Calculate how many permits issues in 2015 and 2016 are outstanding in each city. Display the results in order of number of outstanding permits, highest to lowest. <strong>Hint:</strong> Use the <code>dplyr</code> function <code>arrange()</code> , it has similar syntax to other dplyr functions.</p>
 </div>
 </section>
 <section class="challenge panel panel-success">
 <div class="panel-heading">
-<h2><span class="glyphicon glyphicon-pencil"></span>Solution to Challenge 1</h2>
+<h2 id="solution-to-challenge-1"><span class="glyphicon glyphicon-pencil"></span>Solution to Challenge 1</h2>
 </div>
 <div class="panel-body">
-<pre class="sourceCode r"><code class="sourceCode r">year_country_lifeExp_Africa &lt;-<span class="st"> </span>gapminder %&gt;%
-<span class="st">                           </span><span class="kw">filter</span>(continent==<span class="st">&quot;Africa&quot;</span>) %&gt;%
-<span class="st">                           </span><span class="kw">select</span>(year,country,lifeExp)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">year_city_currentValue_Garages &lt;-<span class="st"> </span>permits %&gt;%
+<span class="st">                           </span><span class="kw">filter</span>(mpac_wd==<span class="st">&quot;Garage&quot;</span>) %&gt;%
+<span class="st">                           </span><span class="kw">select</span>(isu_year,city,current_value)</code></pre></div>
 </div>
 </section>
 <section class="challenge panel panel-success">
 <div class="panel-heading">
-<h2><span class="glyphicon glyphicon-pencil"></span>Solution to Challenge 2</h2>
+<h2 id="solution-to-challenge-2"><span class="glyphicon glyphicon-pencil"></span>Solution to Challenge 2</h2>
 </div>
 <div class="panel-body">
-<pre class="sourceCode r"><code class="sourceCode r">lifeExp_bycountry &lt;-<span class="st"> </span>gapminder %&gt;%
-<span class="st">   </span><span class="kw">group_by</span>(country) %&gt;%
-<span class="st">   </span><span class="kw">summarize</span>(<span class="dt">mean_lifeExp=</span><span class="kw">mean</span>(lifeExp))</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">processingTime_by_city &lt;-<span class="st"> </span>permits %&gt;%
+<span class="st">   </span><span class="kw">group_by</span>(city) %&gt;%
+<span class="st">   </span><span class="kw">summarize</span>(<span class="dt">mean_processingTime=</span><span class="kw">mean</span>(total_time))</code></pre></div>
 </div>
 </section>
 <section class="challenge panel panel-success">
 <div class="panel-heading">
-<h2><span class="glyphicon glyphicon-pencil"></span>Solution to Advanced Challenge</h2>
+<h2 id="solution-to-advanced-challenge"><span class="glyphicon glyphicon-pencil"></span>Solution to Advanced Challenge</h2>
 </div>
 <div class="panel-body">
-<pre class="sourceCode r"><code class="sourceCode r">lifeExp_2countries_bycontinents &lt;-<span class="st"> </span>gapminder %&gt;%<span class="st"> </span>
-<span class="st">   </span><span class="kw">filter</span>(year==<span class="dv">2002</span>) %&gt;%
-<span class="st">   </span><span class="kw">group_by</span>(continent) %&gt;%
-<span class="st">   </span><span class="kw">sample_n</span>(<span class="dv">2</span>) %&gt;%
-<span class="st">   </span><span class="kw">summarize</span>(<span class="dt">mean_lifeExp=</span><span class="kw">mean</span>(lifeExp)) %&gt;%
-<span class="st">   </span><span class="kw">arrange</span>(<span class="kw">desc</span>(mean_lifeExp))</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">permits %&gt;%<span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(isu_year %in%<span class="st"> </span><span class="kw">c</span>(<span class="dv">2015</span>,<span class="dv">2016</span>)) %&gt;%
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">outstanding =</span> <span class="kw">is.na</span>(comp_date)) %&gt;%
+<span class="st">  </span><span class="kw">select</span>(city, outstanding) %&gt;%
+<span class="st">  </span><span class="kw">filter</span>(outstanding) %&gt;%
+<span class="st">  </span><span class="kw">group_by</span>(city) %&gt;%
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">count =</span> <span class="kw">n</span>()) %&gt;%
+<span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(count))</code></pre></div>
+<pre class="output"><code>Source: local data frame [25 x 2]
+
+           city count
+         (fctr) (int)
+1    Mississauga    21
+2        Toronto    17
+3      Kitchener    10
+4         Ottawa     9
+5        Windsor     8
+6         Barrie     6
+7       Hamilton     6
+8         London     6
+9  Richmond Hill     6
+10      Cornwall     4
+..           ...   ...
+</code></pre>
 </div>
 </section>
 <h2 id="other-great-resources">Other great resources</h2>

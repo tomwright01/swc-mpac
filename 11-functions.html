@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="generator" content="pandoc">
+    <title>Software Carpentry: R for reproducible scientific analysis</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap-theme.css" />
+    <link rel="stylesheet" type="text/css" href="css/swc.css" />
+    <link rel="alternate" type="application/rss+xml" title="Software Carpentry Blog" href="http://software-carpentry.org/feed.xml"/>
+    <meta charset="UTF-8" />
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body class="lesson">
+    <div class="container card">
+      <div class="banner">
+        <a href="http://software-carpentry.org" title="Software Carpentry">
+          <img alt="Software Carpentry banner" src="img/software-carpentry-banner.png" />
+        </a>
+      </div>
+      <article>
+      <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+                    <a href="index.html"><h1 class="title">R for reproducible scientific analysis</h1></a>
+          <h2 class="subtitle">Functions explained</h2>
+          <section class="objectives panel panel-warning">
+<div class="panel-heading">
+<h2 id="learning-objectives"><span class="glyphicon glyphicon-certificate"></span>Learning Objectives</h2>
+</div>
+<div class="panel-body">
+<ul>
+<li>Define a function that takes arguments.</li>
+<li>Return a value from a function.</li>
+<li>Test a function.</li>
+<li>Set default values for function arguments.</li>
+<li>Explain why we should divide programs into small, single-purpose functions.</li>
+</ul>
+</div>
+</section>
+<p>If we only had one data set to analyze, it would probably be faster to load the file into a spreadsheet and use that to plot simple statistics. However, the gapminder data is updated periodically, and we may want to pull in that new information later and re-run our analysis again. We may also obtain similar data from a different source in the future.</p>
+<p>In this lesson, we’ll learn how to write a function so that we can repeat several operations with a single command.</p>
+<aside class="callout panel panel-info">
+<div class="panel-heading">
+<h2 id="what-is-a-function"><span class="glyphicon glyphicon-pushpin"></span>What is a function?</h2>
+</div>
+<div class="panel-body">
+<p>Functions gather a sequence of operations into a whole, preserving it for ongoing use. Functions provide:</p>
+<ul>
+<li>a name we can remember and invoke it by</li>
+<li>relief from the need to remember the individual operations</li>
+<li>a defined set of inputs and expected outputs</li>
+<li>rich connections to the larger programming environment</li>
+</ul>
+<p>As the basic building block of most programming languages, user-defined functions constitute “programming” as much as any single abstraction can. If you have written a function, you are a computer programmer.</p>
+</div>
+</aside>
+<h2 id="defining-a-function">Defining a function</h2>
+<p>Let’s open a new R script file in the <code>functions/</code> directory and call it functions-lesson.R.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_sum &lt;-<span class="st"> </span>function(a, b) {
+  the_sum &lt;-<span class="st"> </span>a +<span class="st"> </span>b
+  <span class="kw">return</span>(the_sum)
+}</code></pre></div>
+<p>Let’s define a function fahr_to_kelvin that converts temperatures from Fahrenheit to Kelvin:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fahr_to_kelvin &lt;-<span class="st"> </span>function(temp) {
+  kelvin &lt;-<span class="st"> </span>((temp -<span class="st"> </span><span class="dv">32</span>) *<span class="st"> </span>(<span class="dv">5</span> /<span class="st"> </span><span class="dv">9</span>)) +<span class="st"> </span><span class="fl">273.15</span>
+  <span class="kw">return</span>(kelvin)
+}</code></pre></div>
+<p>We define <code>fahr_to_kelvin</code> by assigning it to the output of <code>function</code>. The list of argument names are contained within parentheses. Next, the <a href="reference.html#function-body">body</a> of the function–the statements that are executed when it runs–is contained within curly braces (<code>{}</code>). The statements in the body are indented by two spaces. This makes the code easier to read but does not affect how the code operates.</p>
+<p>When we call the function, the values we pass to it are assigned to those variables so that we can use them inside the function. Inside the function, we use a <a href="reference.html#return-statement">return statement</a> to send a result back to whoever asked for it.</p>
+<aside class="callout panel panel-info">
+<div class="panel-heading">
+<h2 id="tip"><span class="glyphicon glyphicon-pushpin"></span>Tip</h2>
+</div>
+<div class="panel-body">
+<p>One feature unique to R is that the return statement is not required. R automatically returns whichever variable is on the last line of the body of the function. But for clarity, we will explicitly define the return statement.</p>
+</div>
+</aside>
+<p>Let’s try running our function. Calling our own function is no different from calling any other function:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># freezing point of water</span>
+<span class="kw">fahr_to_kelvin</span>(<span class="dv">32</span>)</code></pre></div>
+<pre class="output"><code>[1] 273.15
+</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># boiling point of water</span>
+<span class="kw">fahr_to_kelvin</span>(<span class="dv">212</span>)</code></pre></div>
+<pre class="output"><code>[1] 373.15
+</code></pre>
+<section class="challenge panel panel-success">
+<div class="panel-heading">
+<h2 id="challenge-1"><span class="glyphicon glyphicon-pencil"></span>Challenge 1</h2>
+</div>
+<div class="panel-body">
+<p>Write a function called <code>kelvin_to_celsius</code> that takes a temperature in Kelvin and returns that temperature in Celsius</p>
+<p>Hint: To convert from Kelvin to Celsius you minus 273.15</p>
+</div>
+</section>
+<h2 id="combining-functions">Combining functions</h2>
+<p>The real power of functions comes from mixing, matching and combining them into ever large chunks to get the effect we want.</p>
+<p>Let’s define two functions that will convert temperature from Fahrenheit to Kelvin, and Kelvin to Celsius:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fahr_to_kelvin &lt;-<span class="st"> </span>function(temp) {
+  kelvin &lt;-<span class="st"> </span>((temp -<span class="st"> </span><span class="dv">32</span>) *<span class="st"> </span>(<span class="dv">5</span> /<span class="st"> </span><span class="dv">9</span>)) +<span class="st"> </span><span class="fl">273.15</span>
+  <span class="kw">return</span>(kelvin)
+}
+
+kelvin_to_celsius &lt;-<span class="st"> </span>function(temp) {
+  celsius &lt;-<span class="st"> </span>temp -<span class="st"> </span><span class="fl">273.15</span>
+  <span class="kw">return</span>(celsius)
+}</code></pre></div>
+<section class="challenge panel panel-success">
+<div class="panel-heading">
+<h2 id="challenge-2"><span class="glyphicon glyphicon-pencil"></span>Challenge 2</h2>
+</div>
+<div class="panel-body">
+<p>Define the function to convert directly from Fahrenheit to Celsius, by reusing the two functions above (or using your own functions if you prefer).</p>
+</div>
+</section>
+<p>We’re going to define a function that calculates the processing time for permits available in our dataset:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Takes a dataset and subtracts the completion date from the issue date</span>
+calcProcessTime &lt;-<span class="st"> </span>function(dat) {
+  processTime &lt;-<span class="st"> </span>dat$comp_date -<span class="st"> </span>dat$isu_date
+  <span class="kw">return</span>(<span class="kw">as.integer</span>(processTime))
+}</code></pre></div>
+<p>We define <code>calcProcessTime</code> by assigning it to the output of <code>function</code>. The list of argument names are contained within parentheses. Next, the body of the function – the statements executed when you call the function – is contained within curly braces (<code>{}</code>).</p>
+<p>We’ve indented the statements in the body by two spaces. This makes the code easier to read but does not affect how it operates.</p>
+<p>When we call the function, the values we pass to it are assigned to the arguments, which become variables inside the body of the function.</p>
+<p>Inside the function, we use the <code>return</code> function to send back the result. This return function is optional: R will automatically return the results of whatever command is executed on the last line of the function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">calcProcessTime</span>(<span class="kw">head</span>(permits))</code></pre></div>
+<pre class="output"><code>[1] 436 493 504 748 525 560
+</code></pre>
+<p>That’s not very informative. Let’s add some more arguments so we can extract that per year and city</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Takes a dataset and subtracts the isu_date from the comp_date</span>
+calcProcessTime &lt;-<span class="st"> </span>function(dat, <span class="dt">year=</span><span class="ot">NULL</span>, <span class="dt">city=</span><span class="ot">NULL</span>) {
+  if(!<span class="kw">is.null</span>(year)) {
+    dat &lt;-<span class="st"> </span>dat[dat$isu_year %in%<span class="st"> </span>year, ]
+  }
+  if (!<span class="kw">is.null</span>(city)) {
+    dat &lt;-<span class="st"> </span>dat[dat$city %in%<span class="st"> </span>city,]
+  }
+  processTime &lt;-<span class="st"> </span>dat$comp_date -<span class="st"> </span>dat$isu_date
+
+  new &lt;-<span class="st"> </span><span class="kw">cbind</span>(dat, <span class="dt">processTime=</span>processTime)
+  <span class="kw">return</span>(new)
+}</code></pre></div>
+<p>If you’ve been writing these functions down into a separate R script (a good idea!), you can load in the functions into our R session by using the <code>source</code> function:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">source</span>(<span class="st">&quot;functions/functions-lesson.R&quot;</span>)</code></pre></div>
+<p>Ok, so there’s a lot going on in this function now. In plain English, the function now subsets the provided data by year if the year argument isn’t empty, then subsets the result by country if the country argument isn’t empty. Then it calculates the GDP for whatever subset emerges from the previous two steps. The function then adds the GDP as a new column to the subsetted data and returns this as the final result. You can see that the output is much more informative than a vector of numbers.</p>
+<p>Let’s take a look at what happens when we specify the year:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(<span class="kw">calcProcessTime</span>(permits, <span class="dt">year=</span><span class="dv">2014</span>))</code></pre></div>
+<pre class="output"><code>        roll_no   rec_date   add_date   isu_date last_review_date
+2  1.204211e+18 2015-10-15 2015-11-26 2014-09-16       2015-09-11
+6  1.901022e+18 2014-07-07 2014-07-29 2014-06-24       2015-10-08
+12 6.146000e+17 2014-02-08 2014-03-21 2014-01-31       2015-03-05
+15 1.290278e+18 2014-06-02 2014-06-11 2014-05-01       2015-08-12
+22 1.908122e+18 2014-12-08 2015-01-05 2014-11-14       2015-05-07
+26 1.938060e+18 2014-12-15 2015-01-09 2014-08-18       2013-10-15
+    comp_date minor2 current_value forecasted_value              reg
+2  2016-01-22  Major        434000               NA       06 Trenton
+6  2016-01-05  Major        284000               NA       09 Toronto
+12       &lt;NA&gt;  Major        196000               NA        03 Ottawa
+15       &lt;NA&gt;  Major         13300               NA       06 Trenton
+22       &lt;NA&gt;  Major      15987000               NA       09 Toronto
+26       &lt;NA&gt;  Major        284000               NA 14 Richmond Hill
+     zone region mpac_wd0      mpac_wd          city total_time isu_year
+2  Zone 3      6        1 New Building       Trenton    99 days     2014
+6  Zone 4      9        1 New Building       Toronto   547 days     2014
+12 Zone 6      3        1 New Building        Ottawa    NA days     2014
+15 Zone 3      6        1 New Building       Trenton    NA days     2014
+22 Zone 4      9        1 New Building       Toronto    NA days     2014
+26 Zone 3     14        1 New Building Richmond Hill    NA days     2014
+   processTime
+2     493 days
+6     560 days
+12     NA days
+15     NA days
+22     NA days
+26     NA days
+</code></pre>
+<p>Or for a specific city:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">calcProcessTime</span>(permits, <span class="dt">city=</span><span class="st">&quot;Barrie&quot;</span>)</code></pre></div>
+<pre class="output"><code>         roll_no   rec_date   add_date   isu_date last_review_date
+50  4.324040e+18 2015-06-18 2016-02-22 2015-04-15             &lt;NA&gt;
+51  4.351010e+18 2015-08-04 2015-09-10 2015-07-22       2006-11-21
+56  4.372010e+18 2012-12-04 2012-12-27 2012-11-08       2015-10-06
+72  4.316020e+18 2015-02-09 2015-03-10 2015-01-19       2016-02-23
+78  4.316020e+18 2015-02-09 2015-03-10 2015-01-19       2016-03-23
+82  4.324020e+18 2013-06-03 2014-07-04 2013-05-08       2015-04-14
+105 4.324040e+18 2014-10-02 2014-11-11 2014-09-26       2015-07-13
+113 4.316010e+18 2013-07-19 2013-08-08 2013-06-19       2014-08-20
+119 4.351010e+18 2013-10-01 2013-10-21 2013-09-13       2015-07-21
+121 4.368000e+18 2013-08-07 2013-08-20 2013-07-10       2014-10-10
+125 4.316010e+18 2007-01-08 2007-01-09 2006-12-01       2013-07-08
+126 4.324040e+18 2015-08-10 2016-02-22 2015-07-31             &lt;NA&gt;
+128 4.324040e+18 2014-05-02 2014-05-13 2014-04-03       2015-02-26
+129 4.324040e+18 2014-07-02 2014-07-14 2014-06-05       2015-02-18
+149 4.324040e+18 2015-07-03 2015-08-06 2015-06-18       2015-01-09
+219 4.364010e+18 2013-06-03 2013-07-17 2013-05-01       2011-05-20
+250 4.352010e+18 2013-09-18 2013-10-08 2013-08-23       2015-04-17
+261 4.331070e+18 2013-10-04 2013-10-28 2013-09-04       2016-03-23
+278 4.342021e+18 2014-10-06 2014-11-25 2014-09-18       2016-03-15
+333 4.368000e+18 2014-09-05 2014-11-03 2014-08-22             &lt;NA&gt;
+354 4.321010e+18 2015-06-04 2015-07-08 2015-05-14       2011-08-30
+393 4.341030e+18 2010-09-15 2011-01-12 2010-08-05       2014-10-01
+447 4.342050e+18 2014-03-10 2014-04-15 2009-06-25       2010-12-11
+465 4.342050e+18 2014-03-10 2014-04-15 2014-01-27       2014-09-17
+476 4.312020e+18 2014-09-05 2014-10-22 2014-05-01       2015-03-17
+480 4.368000e+18 2013-09-06 2013-09-19 2013-08-16       2014-09-05
+493 4.342040e+18 2013-08-16 2013-09-12 2012-11-08             &lt;NA&gt;
+495 4.342050e+18 2013-09-30 2013-10-18 2013-08-07       2016-03-14
+506 4.331060e+18 2015-09-04 2015-10-06 2015-08-24       2016-01-22
+515 4.324010e+18 2015-01-07 2015-02-04 2014-12-11       2015-11-02
+534 4.324020e+18 2014-09-04 2014-10-14 2014-08-01       2015-09-23
+544 4.342040e+18 2012-06-11 2012-06-15 2012-05-01       2015-05-21
+548 4.342050e+18 2013-08-16 2013-09-12 2013-04-30             &lt;NA&gt;
+558 4.368000e+18 2014-09-05 2014-11-03 2014-08-14       2015-07-23
+     comp_date minor2 current_value forecasted_value       reg   zone
+50        &lt;NA&gt;  Major            NA               NA 16 Barrie Zone 5
+51        &lt;NA&gt;  Major         69000               NA 16 Barrie Zone 5
+56  2014-10-16  Major       7890000               NA 16 Barrie Zone 5
+72  2016-02-24  Major        509000               NA 16 Barrie Zone 5
+78  2016-03-29  Major        543000               NA 16 Barrie Zone 5
+82  2015-04-16  Major        357000               NA 16 Barrie Zone 5
+105 2015-07-17  Major        404000               NA 16 Barrie Zone 5
+113 2014-08-21  Major        314000               NA 16 Barrie Zone 5
+119 2015-08-06  Major        403000               NA 16 Barrie Zone 5
+121 2014-09-22  Major        424000               NA 16 Barrie Zone 5
+125       &lt;NA&gt;  Major       1603000            38318 16 Barrie Zone 5
+126       &lt;NA&gt;  Minor        168000               NA 16 Barrie Zone 5
+128 2014-11-18  Major        331000               NA 16 Barrie Zone 5
+129 2014-11-18  Major        353000               NA 16 Barrie Zone 5
+149       &lt;NA&gt;  Major     174289000               NA 16 Barrie Zone 5
+219       &lt;NA&gt;  Major        444000               NA 16 Barrie Zone 5
+250 2015-05-26  Major        428000               NA 16 Barrie Zone 5
+261 2015-06-05  Major        260000               NA 16 Barrie Zone 5
+278 2015-12-08  Major        259000               NA 16 Barrie Zone 5
+333       &lt;NA&gt;  Minor        283000               NA 16 Barrie Zone 5
+354       &lt;NA&gt;  Minor         82000               NA 16 Barrie Zone 5
+393 2014-10-22  Minor        657000                0 16 Barrie Zone 5
+447 2016-05-16  Minor        267000               NA 16 Barrie Zone 5
+465 2014-06-27  Minor       1715000               NA 16 Barrie Zone 5
+476 2015-08-18  Minor      48532000               NA 16 Barrie Zone 5
+480 2014-09-22  Minor        251000               NA 16 Barrie Zone 5
+493 2014-01-27  Major        264000               NA 16 Barrie Zone 5
+495 2014-01-07  Major       3098000               NA 16 Barrie Zone 5
+506       &lt;NA&gt;  Major        212000               NA 16 Barrie Zone 5
+515       &lt;NA&gt;  Major      13175000               NA 16 Barrie Zone 5
+534 2015-04-17  Major        433000               NA 16 Barrie Zone 5
+544 2015-05-21  Major        368000               NA 16 Barrie Zone 5
+548 2014-05-09  Major             9               NA 16 Barrie Zone 5
+558 2015-07-30  Major        589000               NA 16 Barrie Zone 5
+    region mpac_wd0                 mpac_wd   city total_time isu_year
+50      16        1            New Building Barrie    NA days     2015
+51      16        1            New Building Barrie    NA days     2015
+56      16        1            New Building Barrie   681 days     2012
+72      16        1            New Building Barrie   380 days     2015
+78      16        1            New Building Barrie   414 days     2015
+82      16        1            New Building Barrie   682 days     2013
+105     16        1            New Building Barrie   288 days     2014
+113     16        1            New Building Barrie   398 days     2013
+119     16        1            New Building Barrie   674 days     2013
+121     16        1            New Building Barrie   411 days     2013
+125     16        1            New Building Barrie    NA days     2006
+126     16        1            New Building Barrie    NA days     2015
+128     16        1            New Building Barrie   200 days     2014
+129     16        1            New Building Barrie   139 days     2014
+149     16        2                Addition Barrie    NA days     2015
+219     16        9 Alterations/Renovations Barrie    NA days     2013
+250     16        9 Alterations/Renovations Barrie   615 days     2013
+261     16        9 Alterations/Renovations Barrie   609 days     2013
+278     16       10                  Garage Barrie   428 days     2014
+333     16       13                    Deck Barrie    NA days     2014
+354     16        1            New Building Barrie    NA days     2015
+393     16        2                Addition Barrie  1498 days     2010
+447     16        7                Plumbing Barrie   798 days     2009
+465     16        5                   Signs Barrie   109 days     2014
+476     16        7                Plumbing Barrie   347 days     2014
+480     16        8              Demolition Barrie   381 days     2013
+493     16        1            New Building Barrie   164 days     2012
+495     16        7                Plumbing Barrie    99 days     2013
+506     16        8              Demolition Barrie    NA days     2015
+515     16        1            New Building Barrie    NA days     2014
+534     16       13                    Deck Barrie   225 days     2014
+544     16       22                   Fence Barrie  1074 days     2012
+548     16        1            New Building Barrie   266 days     2013
+558     16       13                    Deck Barrie   328 days     2014
+    processTime
+50      NA days
+51      NA days
+56     707 days
+72     401 days
+78     435 days
+82     708 days
+105    294 days
+113    428 days
+119    692 days
+121    439 days
+125     NA days
+126     NA days
+128    229 days
+129    166 days
+149     NA days
+219     NA days
+250    641 days
+261    639 days
+278    446 days
+333     NA days
+354     NA days
+393   1539 days
+447   2517 days
+465    151 days
+476    474 days
+480    402 days
+493    445 days
+495    153 days
+506     NA days
+515     NA days
+534    259 days
+544   1115 days
+548    374 days
+558    350 days
+</code></pre>
+<p>Or both:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">calcProcessTime</span>(permits, <span class="dt">year=</span><span class="dv">2014</span>, <span class="dt">city=</span><span class="st">&quot;Barrie&quot;</span>)</code></pre></div>
+<pre class="output"><code>         roll_no   rec_date   add_date   isu_date last_review_date
+105 4.324040e+18 2014-10-02 2014-11-11 2014-09-26       2015-07-13
+128 4.324040e+18 2014-05-02 2014-05-13 2014-04-03       2015-02-26
+129 4.324040e+18 2014-07-02 2014-07-14 2014-06-05       2015-02-18
+278 4.342021e+18 2014-10-06 2014-11-25 2014-09-18       2016-03-15
+333 4.368000e+18 2014-09-05 2014-11-03 2014-08-22             &lt;NA&gt;
+465 4.342050e+18 2014-03-10 2014-04-15 2014-01-27       2014-09-17
+476 4.312020e+18 2014-09-05 2014-10-22 2014-05-01       2015-03-17
+515 4.324010e+18 2015-01-07 2015-02-04 2014-12-11       2015-11-02
+534 4.324020e+18 2014-09-04 2014-10-14 2014-08-01       2015-09-23
+558 4.368000e+18 2014-09-05 2014-11-03 2014-08-14       2015-07-23
+     comp_date minor2 current_value forecasted_value       reg   zone
+105 2015-07-17  Major        404000               NA 16 Barrie Zone 5
+128 2014-11-18  Major        331000               NA 16 Barrie Zone 5
+129 2014-11-18  Major        353000               NA 16 Barrie Zone 5
+278 2015-12-08  Major        259000               NA 16 Barrie Zone 5
+333       &lt;NA&gt;  Minor        283000               NA 16 Barrie Zone 5
+465 2014-06-27  Minor       1715000               NA 16 Barrie Zone 5
+476 2015-08-18  Minor      48532000               NA 16 Barrie Zone 5
+515       &lt;NA&gt;  Major      13175000               NA 16 Barrie Zone 5
+534 2015-04-17  Major        433000               NA 16 Barrie Zone 5
+558 2015-07-30  Major        589000               NA 16 Barrie Zone 5
+    region mpac_wd0      mpac_wd   city total_time isu_year processTime
+105     16        1 New Building Barrie   288 days     2014    294 days
+128     16        1 New Building Barrie   200 days     2014    229 days
+129     16        1 New Building Barrie   139 days     2014    166 days
+278     16       10       Garage Barrie   428 days     2014    446 days
+333     16       13         Deck Barrie    NA days     2014     NA days
+465     16        5        Signs Barrie   109 days     2014    151 days
+476     16        7     Plumbing Barrie   347 days     2014    474 days
+515     16        1 New Building Barrie    NA days     2014     NA days
+534     16       13         Deck Barrie   225 days     2014    259 days
+558     16       13         Deck Barrie   328 days     2014    350 days
+</code></pre>
+<p>Let’s walk through the body of the function:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">calcProcessTime &lt;-<span class="st"> </span>function(dat, <span class="dt">year=</span><span class="ot">NULL</span>, <span class="dt">city=</span><span class="ot">NULL</span>) {</code></pre></div>
+<p>Here we’ve added two arguments, <code>year</code>, and <code>city</code>. We’ve set <em>default arguments</em> for both as <code>NULL</code> using the <code>=</code> operator in the function definition. This means that those arguments will take on those values unless the user specifies otherwise.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">  if(!<span class="kw">is.null</span>(year)) {
+    dat &lt;-<span class="st"> </span>dat[dat$isu_year %in%<span class="st"> </span>year, ]
+  }
+  if (!<span class="kw">is.null</span>(city)) {
+    dat &lt;-<span class="st"> </span>dat[dat$city %in%<span class="st"> </span>city,]
+  }</code></pre></div>
+<p>Here, we check whether each additional argument is set to <code>null</code>, and whenever they’re not <code>null</code> overwrite the dataset stored in <code>dat</code> with a subset given by the non-<code>null</code> argument.</p>
+<p>I did this so that our function is more flexible for later. We can ask it to calculate the processing time for:</p>
+<ul>
+<li>The whole dataset;</li>
+<li>A single year;</li>
+<li>A single city;</li>
+<li>A single combination of year and city.</li>
+</ul>
+<p>By using <code>%in%</code> instead, we can also give multiple years or countries to those arguments.</p>
+<aside class="callout panel panel-info">
+<div class="panel-heading">
+<h2 id="tip-pass-by-value"><span class="glyphicon glyphicon-pushpin"></span>Tip: Pass by value</h2>
+</div>
+<div class="panel-body">
+<p>Functions in R almost always make copies of the data to operate on inside of a function body. When we modify <code>dat</code> inside the function we are modifying the copy of the gapminder dataset stored in <code>dat</code>, not the original variable we gave as the first argument.</p>
+<p>This is called “pass-by-value” and it makes writing code much safer: you can always be sure that whatever changes you make within the body of the function, stay inside the body of the function.</p>
+</div>
+</aside>
+<aside class="callout panel panel-info">
+<div class="panel-heading">
+<h2 id="tip-function-scope"><span class="glyphicon glyphicon-pushpin"></span>Tip: Function scope</h2>
+</div>
+<div class="panel-body">
+<p>Another important concept is scoping: any variables (or functions!) you create or modify inside the body of a function only exist for the lifetime of the function’s execution. When we call <code>calcProcessTime</code>, the variables <code>dat</code>, <code>processTime</code> and <code>new</code> only exist inside the body of the function. Even if we have variables of the same name in our interactive R session, they are not modified in any way when executing a function.</p>
+</div>
+</aside>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">  processTime &lt;-<span class="st"> </span>dat$comp_year -<span class="st"> </span>dat$isu_year
+  new &lt;-<span class="st"> </span><span class="kw">cbind</span>(dat, <span class="dt">processTime =</span> processTime)
+  <span class="kw">return</span>(new)
+<span class="er">}</span></code></pre></div>
+<p>Finally, we calculated the processing times on our new subset, and created a new data frame with that column added. This means when we call the function later we can see the context for the returned processing time values, which is much better than in our first attempt where we got a vector of numbers.</p>
+<section class="challenge panel panel-success">
+<div class="panel-heading">
+<h2 id="challenge-3"><span class="glyphicon glyphicon-pencil"></span>Challenge 3</h2>
+</div>
+<div class="panel-body">
+<p>Test out your calcProcessTime function by calculating the processing times for Toronto in 2007. How does this differ from Toronto processing times in 2015?</p>
+</div>
+</section>
+<section class="challenge panel panel-success">
+<div class="panel-heading">
+<h2 id="challenge-4"><span class="glyphicon glyphicon-pencil"></span>Challenge 4</h2>
+</div>
+<div class="panel-body">
+<p>The <code>paste</code> function can be used to combine text together, e.g:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">best_practice &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Write&quot;</span>, <span class="st">&quot;programs&quot;</span>, <span class="st">&quot;for&quot;</span>, <span class="st">&quot;people&quot;</span>, <span class="st">&quot;not&quot;</span>, <span class="st">&quot;computers&quot;</span>)
+<span class="kw">paste</span>(best_practice, <span class="dt">collapse=</span><span class="st">&quot; &quot;</span>)</code></pre></div>
+<pre class="output"><code>[1] &quot;Write programs for people not computers&quot;
+</code></pre>
+<p>Write a function called <code>fence</code> that takes two vectors as arguments, called <code>text</code> and <code>wrapper</code>, and prints out the text wrapped with the <code>wrapper</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">fence</span>(<span class="dt">text=</span>best_practice, <span class="dt">wrapper=</span><span class="st">&quot;***&quot;</span>)</code></pre></div>
+<p><em>Note:</em> the <code>paste</code> function has an argument called <code>sep</code>, which specifies the separator between text. The default is a space: &quot; “. The default for <code>paste0</code> is no space”“.</p>
+</div>
+</section>
+<aside class="callout panel panel-info">
+<div class="panel-heading">
+<h2 id="tip-1"><span class="glyphicon glyphicon-pushpin"></span>Tip</h2>
+</div>
+<div class="panel-body">
+<p>R has some unique aspects that can be exploited when performing more complicated operations. We will not be writing anything that requires knowledge of these more advanced concepts. In the future when you are comfortable writing functions in R, you can learn more by reading the <a href="http://cran.r-project.org/doc/manuals/r-release/R-lang.html#Environment-objects">R Language Manual</a> or this <a href="http://adv-r.had.co.nz/Environments.html">chapter</a> from <a href="http://adv-r.had.co.nz/">Advanced R Programming</a> by Hadley Wickham. For context, R uses the terminology “environments” instead of frames.</p>
+</div>
+</aside>
+<aside class="callout panel panel-info">
+<div class="panel-heading">
+<h2 id="tip-testing-and-documenting"><span class="glyphicon glyphicon-pushpin"></span>Tip: Testing and documenting</h2>
+</div>
+<div class="panel-body">
+<p>It’s important to both test functions and document them: Documentation helps you, and others, understand what the purpose of your function is, and how to use it, and its important to make sure that your function actually does what you think.</p>
+<p>When you first start out, your workflow will probably look a lot like this:</p>
+<ol style="list-style-type: decimal">
+<li>Write a function</li>
+<li>Comment parts of the function to document its behaviour</li>
+<li>Load in the source file</li>
+<li>Experiment with it in the console to make sure it behaves as you expect</li>
+<li>Make any necessary bug fixes</li>
+<li>Rinse and repeat.</li>
+</ol>
+<p>Formal documentation for functions, written in separate <code>.Rd</code> files, gets turned into the documentation you see in help files. The <a href="http://cran.r-project.org/web/packages/roxygen2/vignettes/rd.html">roxygen2</a> package allows R coders to write documentation alongside the function code and then process it into the appropriate <code>.Rd</code> files. You will want to switch to this more formal method of writing documentation when you start writing more complicated R projects.</p>
+<p>Formal automated tests can be written using the <a href="http://r-pkgs.had.co.nz/tests.html">testthat</a> package.</p>
+</div>
+</aside>
+<h2 id="challenge-solutions">Challenge solutions</h2>
+<section class="challenge panel panel-success">
+<div class="panel-heading">
+<h2 id="solution-to-challenge-1"><span class="glyphicon glyphicon-pencil"></span>Solution to challenge 1</h2>
+</div>
+<div class="panel-body">
+<p>Write a function called <code>kelvin_to_celsius</code> that takes a temperature in Kelvin and returns that temperature in Celsius</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">kelvin_to_celsius &lt;-<span class="st"> </span>function(temp) {
+ celsius &lt;-<span class="st"> </span>temp -<span class="st"> </span><span class="fl">273.15</span>
+ <span class="kw">return</span>(celsius)
+}</code></pre></div>
+</div>
+</section>
+<section class="challenge panel panel-success">
+<div class="panel-heading">
+<h2 id="solution-to-challenge-2"><span class="glyphicon glyphicon-pencil"></span>Solution to challenge 2</h2>
+</div>
+<div class="panel-body">
+<p>Define the function to convert directly from Fahrenheit to Celsius, by reusing these two functions above</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fahr_to_celsius &lt;-<span class="st"> </span>function(temp) {
+  temp_k &lt;-<span class="st"> </span><span class="kw">fahr_to_kelvin</span>(temp)
+  result &lt;-<span class="st"> </span><span class="kw">kelvin_to_celsius</span>(temp_k)
+  <span class="kw">return</span>(result)
+}</code></pre></div>
+</div>
+</section>
+<section class="challenge panel panel-success">
+<div class="panel-heading">
+<h2 id="solution-to-challenge-3"><span class="glyphicon glyphicon-pencil"></span>Solution to challenge 3</h2>
+</div>
+<div class="panel-body">
+<p>mean process Times for Toronto in 2007: 2435 days</p>
+<p>mean process Times for Toronto in 2015: 494 days</p>
+</div>
+</section>
+<section class="challenge panel panel-success">
+<div class="panel-heading">
+<h2 id="solution-to-challenge-4"><span class="glyphicon glyphicon-pencil"></span>Solution to challenge 4</h2>
+</div>
+<div class="panel-body">
+<p>Write a function called <code>fence</code> that takes two vectors as arguments, called <code>text</code> and <code>wrapper</code>, and prints out the text wrapped with the <code>wrapper</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fence &lt;-<span class="st"> </span>function(text, wrapper){
+  text &lt;-<span class="st"> </span><span class="kw">c</span>(wrapper, text, wrapper)
+  result &lt;-<span class="st"> </span><span class="kw">paste</span>(text, <span class="dt">collapse =</span> <span class="st">&quot; &quot;</span>)
+  <span class="kw">return</span>(result)
+}
+best_practice &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Write&quot;</span>, <span class="st">&quot;programs&quot;</span>, <span class="st">&quot;for&quot;</span>, <span class="st">&quot;people&quot;</span>, <span class="st">&quot;not&quot;</span>, <span class="st">&quot;computers&quot;</span>)
+<span class="kw">fence</span>(<span class="dt">text=</span>best_practice, <span class="dt">wrapper=</span><span class="st">&quot;***&quot;</span>)</code></pre></div>
+<pre class="output"><code>[1] &quot;*** Write programs for people not computers ***&quot;
+</code></pre>
+</div>
+</section>
+        </div>
+      </div>
+      </article>
+      <div class="footer">
+        <a class="label swc-blue-bg" href="http://software-carpentry.org">Software Carpentry</a>
+        <a class="label swc-blue-bg" href="https://github.com/swcarpentry/r-novice-gapminder">Source</a>
+        <a class="label swc-blue-bg" href="mailto:admin@software-carpentry.org">Contact</a>
+        <a class="label swc-blue-bg" href="LICENSE.html">License</a>
+      </div>
+    </div>
+    <!-- Javascript placed at the end of the document so the pages load faster -->
+    <script src="http://software-carpentry.org/v5/js/jquery-1.9.1.min.js"></script>
+    <script src="css/bootstrap/bootstrap-js/bootstrap.js"></script>
+    <script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    
+      ga('create', 'UA-37305346-2', 'auto');
+      ga('send', 'pageview');
+    
+    </script>
+  </body>
+</html>

@@ -379,39 +379,25 @@ Levels: black calico tabby
  $ weight      : num 2.1
  $ likes_string: logi TRUE
 </code></pre>
-<p>Notice the subtle differences between different ways of calling variables, observations and elements from data.frames:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cats[<span class="dv">1</span>]</code></pre></div>
-<pre class="output"><code>    coat
-1 calico
-2  black
-3  tabby
-</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cats[[<span class="dv">1</span>]]</code></pre></div>
-<pre class="output"><code>[1] calico black  tabby 
-Levels: black calico tabby
-</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cats$coat</code></pre></div>
-<pre class="output"><code>[1] calico black  tabby 
-Levels: black calico tabby
-</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cats[<span class="st">&quot;coat&quot;</span>]</code></pre></div>
-<pre class="output"><code>    coat
-1 calico
-2  black
-3  tabby
-</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cats[,<span class="dv">1</span>]</code></pre></div>
-<pre class="output"><code>[1] calico black  tabby 
-Levels: black calico tabby
-</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cats[<span class="dv">1</span>,]</code></pre></div>
-<pre class="output"><code>    coat weight likes_string
-1 calico    2.1         TRUE
-</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cats[<span class="dv">1</span>,<span class="dv">1</span>]</code></pre></div>
-<pre class="output"><code>[1] calico
-Levels: black calico tabby
-</code></pre>
+<section class="challenge panel panel-success">
+<div class="panel-heading">
+<h2 id="challenge-3"><span class="glyphicon glyphicon-pencil"></span>Challenge 3</h2>
+</div>
+<div class="panel-body">
+<p>There are several subtly different ways to call variables, observations and elements from data.frames:</p>
+<ul>
+<li>cats[1]</li>
+<li>cats[[1]]</li>
+<li>cats$coat</li>
+<li>cats[“coat”]</li>
+<li>cats[1, 1]</li>
+<li>cats[, 1]</li>
+<li>cats[1, ]</li>
+</ul>
+<p>Try out these examples and explain what is returned by each one.</p>
+<p><em>Hint:</em> Use the function <code>typeof()</code> to examine what is returned in each case.</p>
+</div>
+</section>
 <h2 id="matrices">Matrices</h2>
 <p>Last but not least is the matrix. We can declare a matrix full of zeros:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">matrix_example &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>, <span class="dt">ncol=</span><span class="dv">6</span>, <span class="dt">nrow=</span><span class="dv">3</span>)
@@ -442,7 +428,7 @@ matrix_example</code></pre></div>
 </code></pre>
 <section class="challenge panel panel-success">
 <div class="panel-heading">
-<h2 id="challenge-3"><span class="glyphicon glyphicon-pencil"></span>Challenge 3</h2>
+<h2 id="challenge-4"><span class="glyphicon glyphicon-pencil"></span>Challenge 4</h2>
 </div>
 <div class="panel-body">
 <p>What do you think will be the result of <code>length(matrix_example)</code>? Try it. Were you right? Why / why not?</p>
@@ -450,7 +436,7 @@ matrix_example</code></pre></div>
 </section>
 <section class="challenge panel panel-success">
 <div class="panel-heading">
-<h2 id="challenge-4"><span class="glyphicon glyphicon-pencil"></span>Challenge 4</h2>
+<h2 id="challenge-5"><span class="glyphicon glyphicon-pencil"></span>Challenge 5</h2>
 </div>
 <div class="panel-body">
 <p>Make another matrix, this time containing the numbers 1:50, with 5 columns and 10 rows. Did the <code>matrix</code> function fill your matrix by column, or by row, as its default behaviour? See if you can figure out how to change this. (hint: read the documentation for <code>matrix</code>!)</p>
@@ -458,7 +444,7 @@ matrix_example</code></pre></div>
 </section>
 <section class="challenge panel panel-success">
 <div class="panel-heading">
-<h2 id="challenge-5"><span class="glyphicon glyphicon-pencil"></span>Challenge 5</h2>
+<h2 id="challenge-6"><span class="glyphicon glyphicon-pencil"></span>Challenge 6</h2>
 </div>
 <div class="panel-body">
 <p>Create a list of length two containing a character vector for each of the sections in this part of the workshop:</p>
@@ -471,7 +457,7 @@ matrix_example</code></pre></div>
 </section>
 <section class="challenge panel panel-success">
 <div class="panel-heading">
-<h2 id="challenge-6"><span class="glyphicon glyphicon-pencil"></span>Challenge 6</h2>
+<h2 id="challenge-7"><span class="glyphicon glyphicon-pencil"></span>Challenge 7</h2>
 </div>
 <div class="panel-body">
 <p>Consider the R output of the matrix below:</p>
@@ -489,6 +475,15 @@ matrix_example</code></pre></div>
 </ol>
 </div>
 </section>
+<h2 id="handling-special-values">Handling special values</h2>
+<p>At some point you will encounter functions in R which cannot handle missing, infinite, or undefined data.</p>
+<p>There are a number of special functions you can use to filter out this data:</p>
+<ul>
+<li><code>is.na</code> will return all positions in a vector, matrix, or data.frame containing <code>NA</code>.</li>
+<li>likewise, <code>is.nan</code>, and <code>is.infinite</code> will do the same for <code>NaN</code> and <code>Inf</code>.</li>
+<li><code>is.finite</code> will return all positions in a vector, matrix, or data.frame that do not contain <code>NA</code>, <code>NaN</code> or <code>Inf</code>.</li>
+<li><code>na.omit</code> will filter out all missing values from a vector</li>
+</ul>
 <h2 id="challenge-solutions">Challenge solutions</h2>
 <section class="challenge panel panel-success">
 <div class="panel-heading">
@@ -520,10 +515,56 @@ x &lt;-<span class="st"> </span>x *<span class="st"> </span><span class="dv">2</
 </section>
 <section class="challenge panel panel-success">
 <div class="panel-heading">
-<h2 id="solution-to-challenge-3"><span class="glyphicon glyphicon-pencil"></span>Solution to challenge 3</h2>
+<h2 id="solution-to-challenge-3"><span class="glyphicon glyphicon-pencil"></span>Solution to Challenge 3</h2>
 </div>
 <div class="panel-body">
-<p>What do you think will be the result of <code>length(matrtix_example)</code>?</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cats[<span class="dv">1</span>]</code></pre></div>
+<pre class="output"><code>    coat
+1 calico
+2  black
+3  tabby
+</code></pre>
+<p>We can think of a data frame as a list of vectors. The single brace <code>[1]</code> returns the first slice of the list, as another list. In this case it is the first column of the data frame.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cats[[<span class="dv">1</span>]]</code></pre></div>
+<pre class="output"><code>[1] calico black  tabby 
+Levels: black calico tabby
+</code></pre>
+<p>The double brace <code>[[1]]</code> returns the contents of the list item. In this case it is the contents of the first column, a <em>vector</em> of type <em>factor</em>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cats$coat</code></pre></div>
+<pre class="output"><code>[1] calico black  tabby 
+Levels: black calico tabby
+</code></pre>
+<p>This example uses the <code>$</code> character to address items by name. <em>coat</em> is the first column of the data frame, again a <em>vector</em> of type <em>factor</em>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cats[<span class="st">&quot;coat&quot;</span>]</code></pre></div>
+<pre class="output"><code>    coat
+1 calico
+2  black
+3  tabby
+</code></pre>
+<p>Here we are using a single brace <code>[&quot;coat&quot;]</code> replacing the index number with the column name. Like example 1, the returned object is a <em>list</em>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cats[<span class="dv">1</span>, <span class="dv">1</span>]</code></pre></div>
+<pre class="output"><code>[1] calico
+Levels: black calico tabby
+</code></pre>
+<p>This example uses a single brace, but this time we provide row and column coordinates. The returned object is the value in row 1, column 1. The object is an <em>integer</em> but because it is part of a <em>vector</em> of type <em>factor</em>, R displays the label “calico” associated with the integer value.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cats[, <span class="dv">1</span>]</code></pre></div>
+<pre class="output"><code>[1] calico black  tabby 
+Levels: black calico tabby
+</code></pre>
+<p>Like the previous example we use single braces and provide row and column coordinates. The row coordinate is not specified, R interprets this missing value as all the elements in this <em>column</em> <em>vector</em>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cats[<span class="dv">1</span>, ]</code></pre></div>
+<pre class="output"><code>    coat weight likes_string
+1 calico    2.1         TRUE
+</code></pre>
+<p>Again we use the single brace with row and column coordinates. The column coordinate is not specified. The return value is a <em>list</em> containing all the values in the first row.</p>
+</div>
+</section>
+<section class="challenge panel panel-success">
+<div class="panel-heading">
+<h2 id="solution-to-challenge-4"><span class="glyphicon glyphicon-pencil"></span>Solution to Challenge 4</h2>
+</div>
+<div class="panel-body">
+<p>What do you think will be the result of <code>length(matrix_example)</code>?</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">matrix_example &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>, <span class="dt">ncol=</span><span class="dv">6</span>, <span class="dt">nrow=</span><span class="dv">3</span>)
 <span class="kw">length</span>(matrix_example)</code></pre></div>
 <pre class="output"><code>[1] 18
@@ -533,7 +574,7 @@ x &lt;-<span class="st"> </span>x *<span class="st"> </span><span class="dv">2</
 </section>
 <section class="challenge panel panel-success">
 <div class="panel-heading">
-<h2 id="solution-to-challenge-4"><span class="glyphicon glyphicon-pencil"></span>Solution to challenge 4</h2>
+<h2 id="solution-to-challenge-5"><span class="glyphicon glyphicon-pencil"></span>Solution to Challenge 5</h2>
 </div>
 <div class="panel-body">
 <p>Make another matrix, this time containing the numbers 1:50, with 5 columns and 10 rows. Did the <code>matrix</code> function fill your matrix by column, or by row, as its default behaviour? See if you can figure out how to change this. (hint: read the documentation for <code>matrix</code>!)</p>
@@ -543,7 +584,7 @@ x &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">
 </section>
 <section class="challenge panel panel-success">
 <div class="panel-heading">
-<h2 id="solution-to-challenge-5"><span class="glyphicon glyphicon-pencil"></span>Solution to Challenge 5</h2>
+<h2 id="solution-to-challenge-6"><span class="glyphicon glyphicon-pencil"></span>Solution to Challenge 6</h2>
 </div>
 <div class="panel-body">
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dataTypes &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;double&#39;</span>, <span class="st">&#39;complex&#39;</span>, <span class="st">&#39;integer&#39;</span>, <span class="st">&#39;character&#39;</span>, <span class="st">&#39;logical&#39;</span>)
@@ -554,7 +595,7 @@ answer &lt;-<span class="st"> </span><span class="kw">list</span>(dataTypes, dat
 </section>
 <section class="challenge panel panel-success">
 <div class="panel-heading">
-<h2 id="solution-to-challenge-6"><span class="glyphicon glyphicon-pencil"></span>Solution to challenge 6</h2>
+<h2 id="solution-to-challenge-7"><span class="glyphicon glyphicon-pencil"></span>Solution to Challenge 7</h2>
 </div>
 <div class="panel-body">
 <p>Consider the R output of the matrix below:</p>

@@ -30,7 +30,7 @@
           <h2 class="subtitle">Project management with RStudio</h2>
           <section class="objectives panel panel-warning">
 <div class="panel-heading">
-<h2><span class="glyphicon glyphicon-certificate"></span>Learning Objectives</h2>
+<h2 id="learning-objectives"><span class="glyphicon glyphicon-certificate"></span>Learning Objectives</h2>
 </div>
 <div class="panel-body">
 <ul>
@@ -51,6 +51,7 @@ Managing your projects in a reproducible fashion doesn’t just make your scienc
 <p>Most people tend to organize their projects like this:</p>
 <div class="figure">
 <img src="fig/bad_layout.png" />
+
 </div>
 <p>There are many reasons why we should <em>ALWAYS</em> avoid this:</p>
 <ol style="list-style-type: decimal">
@@ -70,7 +71,7 @@ Managing your projects in a reproducible fashion doesn’t just make your scienc
 <p>One of the most powerful and useful aspects of RStudio is its project management functionality. We’ll be using this today to create a self-contained, reproducible project.</p>
 <section class="challenge panel panel-success">
 <div class="panel-heading">
-<h2><span class="glyphicon glyphicon-pencil"></span>Challenge: Creating a self-contained project</h2>
+<h2 id="challenge-creating-a-self-contained-project"><span class="glyphicon glyphicon-pencil"></span>Challenge: Creating a self-contained project</h2>
 </div>
 <div class="panel-body">
 <p>We’re going to create a new project in RStudio:</p>
@@ -96,7 +97,22 @@ Managing your projects in a reproducible fashion doesn’t just make your scienc
 <p>There are lots of different was to manage this output. I find it useful to have an output folder with different sub-directories for each separate analysis. This makes it easier later, as many of my analyses are exploratory and don’t end up being used in the final project, and some of the analyses get shared between projects.</p>
 <aside class="callout panel panel-info">
 <div class="panel-heading">
-<h2><span class="glyphicon glyphicon-pushpin"></span>Tip: ProjectTemplate - a possible solution</h2>
+<h2 id="tip-good-enough-practices-for-scientific-computing"><span class="glyphicon glyphicon-pushpin"></span>Tip: Good Enough Practices for Scientific Computing</h2>
+</div>
+<div class="panel-body">
+<p><a href="https://github.com/swcarpentry/good-enough-practices-in-scientific-computing/blob/gh-pages/good-enough-practices-for-scientific-computing.pdf">Good Enough Practices for Scientific Computing</a> gives the following recommendations for project organization:</p>
+<ol style="list-style-type: decimal">
+<li>Put each project in its own directory, which is named after the project.</li>
+<li>Put text documents associated with the project in the <code>doc</code> directory.</li>
+<li>Put raw data and metadata in the <code>data</code> directory, and files generated during cleanup and analysis in a <code>results</code> directory.</li>
+<li>Put source for the project’s scripts and programs in the <code>src</code> directory, and programs brought in from elsewhere or compiled locally in the <code>bin</code> directory.</li>
+<li>Name all files to reflect their content or function.</li>
+</ol>
+</div>
+</aside>
+<aside class="callout panel panel-info">
+<div class="panel-heading">
+<h2 id="tip-projecttemplate---a-possible-solution"><span class="glyphicon glyphicon-pushpin"></span>Tip: ProjectTemplate - a possible solution</h2>
 </div>
 <div class="panel-body">
 <p>One way to automate the management of projects is to install the third-party package, <code>ProjectTemplate</code>. This package will set up an ideal directory structure for project management. This is very useful as it enables you to have your analysis pipeline/workflow organised and structured. Together with the default RStudio project functionality and Git you will be able to keep track of your work as well as be able to share your work with collaborators.</p>
@@ -105,9 +121,9 @@ Managing your projects in a reproducible fashion doesn’t just make your scienc
 <li>Load the library</li>
 <li>Initialise the project:</li>
 </ol>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">&quot;ProjectTemplate&quot;</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">&quot;ProjectTemplate&quot;</span>)
 <span class="kw">library</span>(ProjectTemplate)
-<span class="kw">create.project</span>(<span class="st">&quot;../my_project&quot;</span>, <span class="dt">merge.strategy =</span> <span class="st">&quot;allow.non.conflict&quot;</span>)</code></pre>
+<span class="kw">create.project</span>(<span class="st">&quot;../my_project&quot;</span>, <span class="dt">merge.strategy =</span> <span class="st">&quot;allow.non.conflict&quot;</span>)</code></pre></div>
 <p>For more information on ProjectTemplate and its functionality visit the home page <a href="http://projecttemplate.net/index.html">ProjectTemplate</a></p>
 </div>
 </aside>
@@ -116,7 +132,7 @@ Managing your projects in a reproducible fashion doesn’t just make your scienc
 <p>When your project is new and shiny, the script file usually contains many lines of directly executed code. As it matures, reusable chunks get pulled into their own functions. It’s a good idea to separate these into separate folders; one to store useful functions that you’ll reuse across analyses and projects, and one to store the analysis scripts.</p>
 <aside class="callout panel panel-info">
 <div class="panel-heading">
-<h2><span class="glyphicon glyphicon-pushpin"></span>Tip: avoiding duplication</h2>
+<h2 id="tip-avoiding-duplication"><span class="glyphicon glyphicon-pushpin"></span>Tip: avoiding duplication</h2>
 </div>
 <div class="panel-body">
 <p>You may find yourself using data or analysis scripts across several projects. Typically you want to avoid duplication to save space and avoid having to make updates to code in multiple places.</p>
@@ -127,13 +143,13 @@ Managing your projects in a reproducible fashion doesn’t just make your scienc
 <p>Now we have a good directory structure we will now place/save the data file in the <code>data/</code> directory.</p>
 <section class="challenge panel panel-success">
 <div class="panel-heading">
-<h2><span class="glyphicon glyphicon-pencil"></span>Challenge 1</h2>
+<h2 id="challenge-1"><span class="glyphicon glyphicon-pencil"></span>Challenge 1</h2>
 </div>
 <div class="panel-body">
-<p>Download the gapminder data from <a href="https://raw.githubusercontent.com/resbaz/r-novice-gapminder-files/master/data/gapminder-FiveYearData.csv">here</a>.</p>
+<p>Download the permits data from <a href="XXXX">here</a>.</p>
 <ol style="list-style-type: decimal">
 <li>Download the file (CTRL + S, right mouse click -&gt; “Save as”, or File -&gt; “Save page as”)</li>
-<li>Make sure it’s saved under the name <code>gapminder-FiveYearData.csv</code></li>
+<li>Make sure it’s saved under the name <code>permits_short.csv</code></li>
 <li>Save the file in the <code>data/</code> folder within your project.</li>
 </ol>
 <p>We will load and inspect these data later.</p>
@@ -141,18 +157,26 @@ Managing your projects in a reproducible fashion doesn’t just make your scienc
 </section>
 <section class="challenge panel panel-success">
 <div class="panel-heading">
-<h2><span class="glyphicon glyphicon-pencil"></span>Challenge 2</h2>
+<h2 id="challenge-2"><span class="glyphicon glyphicon-pencil"></span>Challenge 2</h2>
 </div>
 <div class="panel-body">
 <p>It is useful to get some general idea about the dataset, directly from the command line, before loading it into R. Understanding the dataset better will come handy when making decisions on how to load it in R. Use command-line shell to answer the following questions: 1. What is the size of the file? 2. How many rows of data does it contain? 3. What are the data types of values stored in this file?</p>
 </div>
 </section>
+<aside class="callout panel panel-info">
+<div class="panel-heading">
+<h2 id="tip-command-line-in-r-studio"><span class="glyphicon glyphicon-pushpin"></span>Tip: command line in R Studio</h2>
+</div>
+<div class="panel-body">
+<p>You can quickly open up a shell in RStudio using the <strong>Tools -&gt; Shell…</strong> menu item.</p>
+</div>
+</aside>
 <h2 id="version-control">Version Control</h2>
 <p>We also set up our project to integrate with git, putting it under version control. RStudio has a nicer interface to git than shell, but is very limited in what it can do, so you will find yourself occasionally needing to use the shell. Let’s go through and make an initial commit of our template files.</p>
 <p>The workspace/history pane has a tab for “Git”. We can stage each file by checking the box: you will see a Green “A” next to stage files and folders, and yellow question marks next to files or folders git doesn’t know about yet. RStudio also nicely shows you the difference between files from different commits.</p>
 <aside class="callout panel panel-info">
 <div class="panel-heading">
-<h2><span class="glyphicon glyphicon-pushpin"></span>Tip: versioning disposable output</h2>
+<h2 id="tip-versioning-disposable-output"><span class="glyphicon glyphicon-pushpin"></span>Tip: versioning disposable output</h2>
 </div>
 <div class="panel-body">
 <p>Generally you do not want to version disposable output (or read-only data). You should modify the <code>.gitignore</code> file to tell git to ignore these files and directories.</p>
@@ -160,7 +184,7 @@ Managing your projects in a reproducible fashion doesn’t just make your scienc
 </aside>
 <section class="challenge panel panel-success">
 <div class="panel-heading">
-<h2><span class="glyphicon glyphicon-pencil"></span>Challenge 3</h2>
+<h2 id="challenge-3"><span class="glyphicon glyphicon-pencil"></span>Challenge 3</h2>
 </div>
 <div class="panel-body">
 <ol style="list-style-type: decimal">
@@ -168,6 +192,45 @@ Managing your projects in a reproducible fashion doesn’t just make your scienc
 <li>Modify the <code>.gitignore</code> file to contain <code>graphs/</code> so that this disposable output isn’t versioned.</li>
 </ol>
 <p>Add the newly created folders to version control using the git interface.</p>
+</div>
+</section>
+<h2 id="challenge-solutions">Challenge Solutions</h2>
+<section class="challenge panel panel-success">
+<div class="panel-heading">
+<h2 id="solution-to-challenge-2"><span class="glyphicon glyphicon-pencil"></span>Solution to Challenge 2</h2>
+</div>
+<div class="panel-body">
+<p>By running these commands in the shell:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ls -lh data/permits_short.csv</code></pre></div>
+<pre class="output"><code>-rw-r--r-- 1 tom tom 86K Jun 20 17:07 data/permits_short.csv
+</code></pre>
+<p>The file size is 80K.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">wc -l data/permits_short.csv</code></pre></div>
+<pre class="output"><code>570 data/permits_short.csv
+</code></pre>
+<p>There are 1705 lines and the data looks like:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">head data/permits_short.csv</code></pre></div>
+<pre class="output"><code>&quot;roll_no&quot;,&quot;rec_date&quot;,&quot;add_date&quot;,&quot;isu_date&quot;,&quot;last_review_date&quot;,&quot;comp_date&quot;,&quot;minor2&quot;,&quot;current_value&quot;,&quot;forecasted_value&quot;,&quot;reg&quot;,&quot;zone&quot;,&quot;region&quot;,&quot;mpac_wd0&quot;,&quot;mpac_wd&quot;,&quot;city&quot;
+1801010038008049920,&quot;11/4/2013&quot;,&quot;7/18/2014&quot;,&quot;10/23/2013&quot;,&quot;10/2/2014&quot;,&quot;1/2/2015&quot;,&quot;Major&quot;,805000,NA,&quot;13 Durham&quot;,&quot;Zone 3&quot;,13,1,&quot;New Building&quot;,&quot;Durham&quot;
+1204211080205169920,&quot;10/15/2015&quot;,&quot;11/26/2015&quot;,&quot;9/16/2014&quot;,&quot;9/11/2015&quot;,&quot;1/22/2016&quot;,&quot;Major&quot;,434000,NA,&quot;06 Trenton&quot;,&quot;Zone 3&quot;,6,1,&quot;New Building&quot;,&quot;Trenton&quot;
+2110080012356160000,&quot;11/8/2012&quot;,&quot;12/6/2013&quot;,&quot;9/10/2012&quot;,&quot;4/14/2014&quot;,&quot;1/27/2014&quot;,&quot;Major&quot;,405000,NA,&quot;15 Mississauga&quot;,&quot;Zone 2&quot;,15,1,&quot;New Building&quot;,&quot;Mississauga&quot;
+3739070730161039872,&quot;2/1/2012&quot;,&quot;12/14/2012&quot;,&quot;1/10/2012&quot;,&quot; &quot;,&quot;1/27/2014&quot;,&quot;Major&quot;,NA,NA,&quot;27 Windsor&quot;,&quot;Zone 1&quot;,27,1,&quot;New Building&quot;,&quot;Windsor&quot;
+1936030232784189952,&quot;9/6/2012&quot;,&quot;10/12/2012&quot;,&quot;8/24/2012&quot;,&quot;1/30/2014&quot;,&quot;1/31/2014&quot;,&quot;Major&quot;,594000,NA,&quot;14 Richmond Hill&quot;,&quot;Zone 3&quot;,14,1,&quot;New Building&quot;,&quot;Richmond Hill&quot;
+1.901022270043e+18,&quot;7/7/2014&quot;,&quot;7/29/2014&quot;,&quot;6/24/2014&quot;,&quot;10/8/2015&quot;,&quot;1/5/2016&quot;,&quot;Major&quot;,284000,NA,&quot;09 Toronto&quot;,&quot;Zone 4&quot;,9,1,&quot;New Building&quot;,&quot;Toronto&quot;
+614095302112019968,&quot;2/8/2013&quot;,&quot;8/20/2013&quot;,&quot;4/18/2012&quot;,&quot;1/5/2014&quot;,&quot;1/6/2014&quot;,&quot;Major&quot;,495000,NA,&quot;03 Ottawa&quot;,&quot;Zone 6&quot;,3,1,&quot;New Building&quot;,&quot;Ottawa&quot;
+1936030258076770048,&quot;12/6/2013&quot;,&quot;2/25/2014&quot;,&quot;11/26/2013&quot;,&quot;2/4/2015&quot;,&quot;1/7/2015&quot;,&quot;Major&quot;,672000,NA,&quot;14 Richmond Hill&quot;,&quot;Zone 3&quot;,14,1,&quot;New Building&quot;,&quot;Richmond Hill&quot;
+2110060002153690112,&quot;6/24/2013&quot;,&quot;7/9/2014&quot;,&quot;5/30/2013&quot;,&quot;10/10/2014&quot;,&quot;10/10/2014&quot;,&quot;Major&quot;,370000,NA,&quot;15 Mississauga&quot;,&quot;Zone 2&quot;,15,1,&quot;New Building&quot;,&quot;Mississauga&quot;
+</code></pre>
+</div>
+</section>
+<section class="challenge panel panel-success">
+<div class="panel-heading">
+<h2 id="solution-to-challenge-3"><span class="glyphicon glyphicon-pencil"></span>Solution to Challenge 3</h2>
+</div>
+<div class="panel-body">
+<p>This can be done with the command line:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">$<span class="st"> </span>mkdir graphs
+$<span class="st"> </span>echo <span class="st">&quot;graphs/&quot;</span> &gt;<span class="er">&gt;</span><span class="st"> </span>.gitignore</code></pre></div>
 </div>
 </section>
         </div>
